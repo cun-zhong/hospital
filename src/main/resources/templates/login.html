@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>进行Spring Security 安全验证登陆 Login </title>
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" href="static/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="static/css/login.css" media="all" />
+    <script type="text/javascript" src="static/layui/layui.js"></script>
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.bcat.bgswitcher.js"></script>
+    <script>
+        layui.use(['layer', 'form'], function() {
+            var layer = layui.layer,
+                $ = layui.jquery,
+                form = layui.form;
+
+            $(document).ready(function() {
+                var srcBgArray = [
+                    "static/images/backimage2.jpg",
+                    "static/images/backimage3.jpg",
+                    "static/images/backimage4.jpg",
+                    "static/images/backimage.jpg"];
+                $('#bg-body').bcatBGSwitcher({
+                    timeout:5000,
+                    urls: srcBgArray,
+                    alt: 'Full screen background image'
+                });
+            });
+
+            $("#mycode").on('click',function(){
+                var t = Math.random();
+                $("#mycode")[0].src="/genCaptcha?t= "+t;
+            });
+
+        });
+    </script>
+</head>
+<body>
+<div th:if="${param.error}">
+    用户名密码错误，要不去<a th:href="@{/}">首页</a>看看？
+</div>
+<div th:if="${param.logout}">
+    您已经登出
+</div>
+<div id="bg-body"></div>
+<div class="login">
+    <h1>登陆验证</h1>
+    <form class="layui-form" th:action="@{/login}" method="post">
+        <div class="layui-form-item">
+            <input class="layui-input" placeholder="请输入用户名" lay-verify="required" type="text" autocomplete="off" name="username"/>
+        </div>
+        <div class="layui-form-item">
+            <input class="layui-input" placeholder="请输入密码" lay-verify="required" type="password" autocomplete="off" name="password"/>
+        </div>
+        <div class="layui-form-item">
+            <input type="checkbox" name="remember-me" value="true" lay-skin="primary" checked title="记住帐号?">
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn login_btn"  lay-submit="" lay-filter="login" >登陆</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
