@@ -1,0 +1,53 @@
+.container.active{
+    width: 94%;
+    margin: 0 auto;
+    padding: 3%;
+}
+.container{
+    width: 94%;
+    margin: 0 auto;
+    padding: 3%;
+    height: auto;
+}
+.container.active .top #changeButton{
+    margin-top:4px;
+}
+.container .top #changeButton{
+    margin-top:4px;
+}
+.container .content .ckbox{
+    margin-left: 50%;
+}
+.container::after{
+    content: "";
+    clear: both;
+    display: block;
+}
+
+.container.active .content ul li div{float:left;text-align:center;}
+.container.active .content ul li .titleI{width:100%;}
+.container.active .content ul li .newDir{width:100%;}
+.container.active .content ul li .size{display:block;float:left;margin-left:100px;text-align:center;}
+.container.active .content ul li .fullName{width:40%;margin-left:5%;}
+.container.active .content ul li .fullNameT{margin-left:7%;}
+.container.active .content ul li .size{width:10%;margin-left:12.8%;}
+.container.active .content ul li .sizeT{margin-left:52.5%;}
+.container.active .content ul li .upTime{width:20%;margin-left:6%;}
+.container.active .content ul li .upTimeT{margin-left:14.5%;}
+.container .content ul li .size{display:none;}
+.container.active .content ul li{float:none;height:3.125rem;width:100%;}
+.container.active .content ul li .ckbox{margin-left: 0;zoom:150%}
+.container.active .content ul li .image{width:2.25rem;height:2.25rem;float:left;margin-top:-10px}
+.container .content ul li{margin:.625rem;list-style:none;width:12.5rem;float:left;height:200px;}
+.container .content ul li .image{width:8rem;height:8rem}
+.container .content ul li div{text-align:center}
+
+.container .top{height:3.125rem;border-bottom:.0625rem solid #ddd}
+.container .top .icon{float:right;display:inline-block;}
+/*# sourceMappingURL=index.29560fc2.css.map*/
+.container .titleClass{display:none;}
+.container.active .titleClass{display:block;}
+
+
+/*top层*/
+
