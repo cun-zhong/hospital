@@ -130,20 +130,38 @@ public class HospitalService {
      */
     public Result addHospital(Hospital hospital) {
         try {
+            //取出医院名称
+            String hospitalName = hospital.getHospitalName();
             //判断医院名称是否为空
-            if (hospital.getHospitalName() != null) {
-                //判断医院编码是否为空
-                if (hospital.getHospitalCode() != null) {
-                    //医院建档时间为当前时间（不可改变）
-                    hospital.setCreateTime(new Date());
-                    //医院信息更新时间为当前时间
-                    hospital.setUpdateTime(new Date());
-                    //进行保存（前端传过来的数据）
-                    Hospital save = hospitalDao.save(hospital);
-                    //返回保存的信息
-                    return new Result(save);
+            if (hospitalName != null) {
+                //调用dao层查询数据库中是否存在此医院名称
+                Hospital byHospitalName = hospitalDao.findByHospitalName(hospitalName);
+                //判断数据库中是否存在此医院名称
+                if (byHospitalName == null) {
+                    //取出医院编码
+                    String hospitalCode = hospital.getHospitalCode();
+                    //判断医院编码是否为空
+                    if (hospitalCode != null) {
+                        //调用dao层查询数据库中是否存在此医院编码
+                        Hospital byHospitalCode = hospitalDao.findByHospitalCode(hospitalCode);
+                        //判断数据库中是否存在此医院编码
+                        if (byHospitalCode == null) {
+                            //医院建档时间为当前时间（不可改变）
+                            hospital.setCreateTime(new Date());
+                            //医院信息更新时间为当前时间
+                            hospital.setUpdateTime(new Date());
+                            //进行保存（前端传过来医院信息的数据）
+                            Hospital save = hospitalDao.save(hospital);
+                            //返回保存的信息
+                            return new Result(0, "新增医院", "");
+                        } else {
+                            return new Result(-1, "医院编码已存在");
+                        }
+                    } else {
+                        return new Result(-1, "医院编码不能为空");
+                    }
                 } else {
-                    return new Result(-1, "医院编码不能为空");
+                    return new Result(-1, "医院名称已存在");
                 }
             } else {
                 return new Result(-1, "医院名称不能为空");
@@ -158,19 +176,38 @@ public class HospitalService {
     /**
      * 修改医院信息
      */
-    public Result updateHospital(Hospital hospital) {
-        try {
-            //修改后保存当前时间
-            hospital.setUpdateTime(new Date());
-            //保存前端传过来的所有信息
-            Hospital save = hospitalDao.save(hospital);
-            //返回保存的信息
-            return new Result(save);
-        } catch (Exception e) {
-            logger.error("【修改医院信息异常】" + hospital + e);
-            return new Result(-1, "修改医院信息异常");
-        }
-    }
+//    public Result updateHospital(Hospital hospital) {
+//        try {
+//            //取出更改后的医院名称
+//            String hospitalName = hospital.getHospitalName();
+//            //取出医院id
+//            Integer id = hospital.getId();
+//            //通过id进行查询
+//            Hospital byId = hospitalDao.findById(id);
+//            //判断如果修改后的名称和修改前的名称不一致
+//            if (!byId.getHospitalName().equals(hospitalName)) {
+//                //通过修改后的名称进行查询数据库中是否存在
+//                Hospital byHospitalName = hospitalDao.findByHospitalName(hospitalName);
+//                //如果数据库中存在
+//
+//                String hospitalCode = hospital.getHospitalCode();
+//                if (b)
+//
+//                if (byHospitalName != null) {
+//                    return new Result(-1,"当前医院名称已存在");
+//                }
+//            }
+//            //修改后保存当前时间
+//            hospital.setUpdateTime(new Date());
+//            //保存前端传过来的所有信息
+//            Hospital save = hospitalDao.save(hospital);
+//            //返回保存的信息
+//            return new Result(save);
+//        } catch (Exception e) {
+//            logger.error("【修改医院信息异常】" + hospital + e);
+//            return new Result(-1, "修改医院信息异常");
+//        }
+//    }
 
 
     /**
