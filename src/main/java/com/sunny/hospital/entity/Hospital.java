@@ -47,13 +47,13 @@ public class Hospital {
   @Temporal(TemporalType.TIMESTAMP)
   @Column(updatable = false)
   private Date createTime;
-  //创建时间
+  //更新时间
   @Temporal(TemporalType.TIMESTAMP)
   @Column(updatable = false)
   private Date updateTime;
   //医院等级
   private String level;
-  //评论输了
+  //评论数量
   private Integer commentNum;
   //订单数量
   private Integer payNum;
