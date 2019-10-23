@@ -28,40 +28,64 @@ public class HospitalController {
 
     /**
      * @deprecated 首页
-     * */
+     */
     @GetMapping("/index")
-    public String blogIndex(){
+    public String blogIndex() {
         return "hospital/index";
     }
 
     /**
      * 医院展示页
-     * */
+     */
     @GetMapping("hospitalShow")
-    public String HospitalShow(){
+    public String HospitalShow() {
         return "hospital/hospitalShow";
     }
+
     /**
      * 医院管理页面
-     * */
+     */
     @GetMapping("/hospitalManagePage")
-    public String hospitalManagePage(){
+    public String hospitalManagePage() {
         return "hospital/hospitalManage";
     }
 
     /**
-     * @deprecated 筛选查询医院接口
      * @param jsonObject 筛选条件对象
-     * */
+     * @deprecated 筛选查询医院接口
+     */
     @PostMapping("queryHospital")
     @ResponseBody
-    public Result queryHospital(@RequestBody JSONObject jsonObject){
+    public Result queryHospital(@RequestBody JSONObject jsonObject) {
         return hospitalService.queryHospital(jsonObject);
     }
 
+    /**
+     * 添加医院信息
+     */
     @PostMapping("addHospital")
-    public Result addHospital(@RequestBody Hospital hospital){
+    @ResponseBody
+    public Result addHospital(@RequestBody Hospital hospital) {
+        return hospitalService.addHospital(hospital);
+    }
 
+    /**
+     * 修改医院信息
+     */
+    @PostMapping("updateHospital")
+    @ResponseBody
+    public Result updateHospital(@RequestBody Hospital hospital) {
+        return hospitalService.updateHospital(hospital);
+    }
+
+
+    /**
+     * 删除医院信息
+     */
+    @GetMapping("deleteHospital")
+    @ResponseBody
+    public Result deleteHospital(Integer id) {
+        return hospitalService.deleteHospital(id);
     }
 
 }

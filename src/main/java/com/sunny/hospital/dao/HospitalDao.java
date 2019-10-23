@@ -10,4 +10,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Version 1.0
  */
 public interface HospitalDao extends JpaRepository<Hospital,Long> {
+    //根据医院的id进行查询
+    Hospital findById(Integer id);
+
+    //根据易于你名称进行查询
+    Hospital findByHospitalName(String hospitalName);
+
+    //根据医院编号进行查询
+    Hospital findByHospitalCode(String hospitalCode);
+
+    //根据医院id进行删除
+    Hospital deleteById(Integer id);
 }
