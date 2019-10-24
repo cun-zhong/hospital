@@ -30,8 +30,6 @@ public class Department {
     private Integer id;
     //医院编码
     private String hospitalCode;
-    //医院科室id
-    private String hisDepartmentId;
     //医院科室名称
     private String hisDepartmentName;
     //医院科室介绍

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/16 16:21
@@ -102,5 +104,14 @@ public class HospitalController {
     @ResponseBody
     public Result deleteHospital(Integer id) {
         return hospitalService.deleteHospital(id);
+    }
+
+    /**
+     * 查询所有医院
+     * */
+    @GetMapping("findAll")
+    public Result findAll(){
+        List<Hospital> all = hospitalService.findAll();
+        return new Result(all);
     }
 }

@@ -115,7 +115,7 @@
     function edit(data) {
       layer.open({
         type: 2
-        ,title: '编辑文章'
+        ,title: '编辑医院'
         ,content: 'hospital/updateOrAddHospital?id='+data.id
         ,maxmin: true
         ,area: ['550px', '550px']
@@ -129,28 +129,6 @@
     }
 
     var $ = layui.$, active = {
-      /*batchdel: function(){
-        var checkStatus = table.checkStatus('LAY-app-content-list')
-        ,checkData = checkStatus.data; //得到选中的数据
-
-        if(checkData.length === 0){
-          return layer.msg('请选择数据');
-        }
-
-        layer.confirm('确定删除吗？', function(index) {
-
-          //执行 Ajax 后重载
-          /!*
-          admin.req({
-            url: 'xxx'
-            //,……
-          });
-          *!/
-          table.reload('LAY-app-content-list');
-          layer.msg('已删除');
-        });
-      },*/
-
       //添加操作
       add: function(){
         layer.open({

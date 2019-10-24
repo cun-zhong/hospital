@@ -18,7 +18,6 @@ public class DepartmentRowMapper implements RowMapper, Serializable {
     public Object mapRow(ResultSet resultSet, int i) throws SQLException {
         Department department = new Department();
         department.setId(resultSet.getInt("id"));
-        department.setHisDepartmentId(resultSet.getString("his_department_id"));
         department.setHisDepartmentName(resultSet.getString("his_department_name"));
         department.setHospitalCode(resultSet.getNString("hospital_code"));
         department.setIntroduction(resultSet.getString("introduction"));

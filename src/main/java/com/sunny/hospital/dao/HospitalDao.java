@@ -4,6 +4,7 @@ import com.sunny.hospital.entity.Hospital;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * @Author: 孙宇豪
@@ -24,6 +25,9 @@ public interface HospitalDao extends JpaRepository<Hospital,Long> {
 
     //根据医院id进行删除
     void deleteById(Integer id);
+
+    //查询所以医院
+    List<Hospital> findAll();
 
 
 }

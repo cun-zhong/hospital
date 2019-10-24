@@ -38,7 +38,12 @@ public class DepartmentService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
+    /**
+     * 根据id查询科室
+     * */
+    public Department findById(Integer id){
+        return departmentDao.findById(id);
+    }
     /**
      * 添加科室
      */
@@ -189,7 +194,7 @@ public class DepartmentService {
             dataSql.append(sb);
             //按倒序方式排列并分页
             dataSql.append(" order by created_time desc limit " + firstRow + "," + rowPerPage);
-            List query = jdbcTemplate.query(dataSql.toString(), new DepartmentRowMapper());
+            List<Department> query = jdbcTemplate.query(dataSql.toString(), new DepartmentRowMapper());
             return new Result(query, allCount);
         }catch (Exception e){
             LOGGER.error("科室筛选查询异常" + e);
