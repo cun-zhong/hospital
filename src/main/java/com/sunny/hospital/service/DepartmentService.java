@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/16 16:21
- * @Description: 医院业务层
+ * @Description: 科室业务层
  * @Version 1.0
  */
 @Service
@@ -64,7 +64,7 @@ public class DepartmentService {
                 String hospitalCode = department.getHospitalCode();
 
                 //调用dao层方法 通过科室名称和医院编号进行查询
-                Department byHisDepartmentNameAndHospitalCode = departmentDao.findByHisDepartmentNameAndHospitalCode(hisDepartmentName,hospitalCode);
+                Department byHisDepartmentNameAndHospitalCode = departmentDao.findByHisDepartmentNameAndHospitalCode(hisDepartmentName, hospitalCode);
 
                 //判断该医院中存在相同的科室名称
                 if (byHisDepartmentNameAndHospitalCode != null) {
@@ -136,30 +136,26 @@ public class DepartmentService {
     }
 
 
-
-
     /**
      * 通过科室id进行删除科室
      */
-    public Result deleteById(Integer id){
-        try{
+    public Result deleteById(Integer id) {
+        try {
             //调用dao层的方法，通过科室id进行删除
             departmentDao.deleteById(id);
             return new Result(0, "成功删除此科室", "");
-        }catch (Exception e){
-            logger.error("【删除科室异常】" + id+ e);
+        } catch (Exception e) {
+            logger.error("【删除科室异常】" + id + e);
             return new Result(-1, "删除科室异常");
         }
     }
 
 
-
-
     /**
      * 筛选查询医院科室列表
      */
-    public Result  queryDepartment(JSONObject jsonObject) {
-        try{
+    public Result queryDepartment(JSONObject jsonObject) {
+        try {
             StringBuilder sb = new StringBuilder(); //创建拼接对象
             String hisDepartmentName = jsonObject.getString("hisDepartmentName");
             String hospitalCode = jsonObject.getString("hospitalCode");
@@ -196,7 +192,7 @@ public class DepartmentService {
             dataSql.append(" order by created_time desc limit " + firstRow + "," + rowPerPage);
             List<Department> query = jdbcTemplate.query(dataSql.toString(), new DepartmentRowMapper());
             return new Result(query, allCount);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("科室筛选查询异常" + e);
             return new Result<>(-1, "科室筛选查询异常");
         }

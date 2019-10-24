@@ -70,6 +70,7 @@ public class DepartmentController {
         return departmentService.addDepartment(department);
     }
 
+
     /**
      *修改科室信息
      */
@@ -79,6 +80,7 @@ public class DepartmentController {
         return  departmentService.updateDepartment(department);
     }
 
+
     /**
      * 删除科室信息
      */
@@ -87,6 +89,7 @@ public class DepartmentController {
     public Result deleteById(Integer id){
         return departmentService.deleteById(id);
     }
+
 
     /**
      * @param jsonObject 筛选条件对象
