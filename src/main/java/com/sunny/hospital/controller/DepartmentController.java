@@ -28,25 +28,23 @@ public class DepartmentController {
     private DepartmentService departmentService;
 
 
-
-
     /**
      * 添加科室信息
      */
     @PostMapping("addDepartment")
     @ResponseBody
-    public Result addDepartment(@RequestBody Department department){
+    public Result addDepartment(@RequestBody Department department) {
         return departmentService.addDepartment(department);
     }
 
 
     /**
-     *修改科室信息
+     * 修改科室信息
      */
     @PostMapping("updateDepartment")
     @ResponseBody
-    public Result updateDepartment(@RequestBody Department department){
-        return  departmentService.updateDepartment(department);
+    public Result updateDepartment(@RequestBody Department department) {
+        return departmentService.updateDepartment(department);
     }
 
 
@@ -55,7 +53,7 @@ public class DepartmentController {
      */
     @GetMapping("deleteById")
     @ResponseBody
-    public Result deleteById(Integer id){
+    public Result deleteById(Integer id) {
         return departmentService.deleteById(id);
     }
 

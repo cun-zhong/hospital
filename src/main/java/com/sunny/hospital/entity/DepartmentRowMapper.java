@@ -9,7 +9,7 @@ import java.sql.SQLException;
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/21
- * @Description: 封装医院返回对象 将数据库对象转化为实体类对象
+ * @Description: 封装科室返回对象 将数据库对象转化为实体类对象
  * @Version 1.0
  */
 
