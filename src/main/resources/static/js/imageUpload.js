@@ -4,12 +4,13 @@ layui.use('upload', function(){
     var uploadurl="http://孙宇豪.online:8080/upload/upload/uploadImage";
     //普通图片上传
     var uploadInst = upload.render({
-        elem: '.layui-upload-drag'
+        elem: '#fileUpload'
         ,url: uploadurl
         ,before: function(obj){
             //预读本地文件示例，不支持ie8
             obj.preview(function(index, file, result){
-                $('.uploadimg').attr('src', result); //图片链接（base64）
+                $('#img').attr('src', result); //图片链接（base64）
+                $("#img").show();
             });
         }
         //请求接口成功
@@ -30,7 +31,7 @@ layui.use('upload', function(){
 
             //上传成功
             //向后台返回图片地址
-            $('#articleImgUrl').attr('value', res.result);
+            $('#hospitalHeadImage').attr('value', res.result);
             return layer.msg('上传成功');
 
         }

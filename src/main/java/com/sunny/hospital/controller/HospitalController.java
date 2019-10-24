@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -49,6 +50,20 @@ public class HospitalController {
     @GetMapping("/hospitalManagePage")
     public String hospitalManagePage() {
         return "hospital/hospitalManage";
+    }
+
+    /**
+     * @deprecated 添加或修改医院信息页面
+     * */
+    @GetMapping("updateOrAddHospital")
+    public String updateOrAddHospital(Integer id, ModelMap modelMap){
+        if (id!=null){
+            Hospital findbyid = hospitalService.findbyid(id);
+            modelMap.addAttribute("hospital",findbyid);
+        }else {
+            modelMap.addAttribute("hospital",new Hospital());
+        }
+        return "hospital/updateOrAddHospital";
     }
 
     /**

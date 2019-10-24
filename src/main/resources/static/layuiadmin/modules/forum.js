@@ -47,7 +47,7 @@ layui.define(['table', 'form'], function(exports){
       layer.open({
         type: 2
         ,title: '编辑帖子'
-        ,content: '../../../views/app/forum/listform.html'
+        ,content: '../../../views/app/forum/contlist.html'
         ,area: ['550px', '400px']
         ,btn: ['确定', '取消']
         ,resize: false

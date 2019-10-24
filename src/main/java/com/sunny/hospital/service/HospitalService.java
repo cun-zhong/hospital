@@ -153,7 +153,7 @@ public class HospitalService {
                             //进行保存（前端传过来医院信息的数据）
                             Hospital save = hospitalDao.save(hospital);
                             //返回保存的信息
-                            return new Result(0, "新增医院", "");
+                            return new Result(0, "新增医院成功", "");
                         } else {
                             return new Result(-1, "医院编码已存在");
                         }

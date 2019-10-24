@@ -73,40 +73,90 @@
     //监听搜索
     form.on('submit(LAY-app-contlist-search)', function(data){
       var field = data.field;
-      
+
       //执行重载
       table.reload('LAY-app-content-list', {
         where: field
       });
+
     });
-    
+    //监听工具条
+    table.on('tool(LAY-app-content-list)', function (obj) {
+      var data = obj.data
+              , layEvent = obj.event;
+      if (layEvent === "del") {
+        del(data);
+      }else if (layEvent === "edit"){
+        edit(data);
+      }
+    });
+
+    //删除方法
+    function del(data) {
+      layer.confirm('确定删除吗？', function (index) {
+        $.ajax({
+          url: "hospital/deleteHospital?id=" + data.id,
+          type: "get",
+          dataType: "json",
+          success: function (data) {
+            if (data.code === 0) {
+              layui.layer.msg("删除成功");
+              table.reload('LAY-app-content-list');
+            } else {
+              layui.layer.msg(data.msg);
+            }
+          }
+        });
+        layer.close(index);
+      });
+    }
+
+    //编辑方法
+    function edit(data) {
+      layer.open({
+        type: 2
+        ,title: '编辑文章'
+        ,content: 'hospital/updateOrAddHospital?id='+data.id
+        ,maxmin: true
+        ,area: ['550px', '550px']
+        ,btn: ['确定', '取消']
+        ,yes: function(index, layero){
+          //点击确认触发 iframe 内容中的按钮提交
+          var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+          submit.click();
+        }
+      });
+    }
+
     var $ = layui.$, active = {
-      batchdel: function(){
+      /*batchdel: function(){
         var checkStatus = table.checkStatus('LAY-app-content-list')
         ,checkData = checkStatus.data; //得到选中的数据
 
         if(checkData.length === 0){
           return layer.msg('请选择数据');
         }
-      
+
         layer.confirm('确定删除吗？', function(index) {
-          
+
           //执行 Ajax 后重载
-          /*
+          /!*
           admin.req({
             url: 'xxx'
             //,……
           });
-          */
+          *!/
           table.reload('LAY-app-content-list');
           layer.msg('已删除');
         });
-      },
+      },*/
+
+      //添加操作
       add: function(){
         layer.open({
           type: 2
           ,title: '添加文章'
-          ,content: 'listform.html'
+          ,content: 'hospital/updateOrAddHospital'
           ,maxmin: true
           ,area: ['550px', '550px']
           ,btn: ['确定', '取消']
@@ -116,7 +166,9 @@
             submit.click();
           }
         }); 
-      }
+      },
+      edit:edit
+
     }; 
 
     $('.layui-btn.layuiadmin-btn-list').on('click', function(){

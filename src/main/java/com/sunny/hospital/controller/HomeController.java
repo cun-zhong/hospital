@@ -39,7 +39,7 @@ public class HomeController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         //返回账号信息
         if("anonymousUser".equals(principal)) {
-            model.addAttribute("name","anonymous");
+            return "/login";
         }else {
             User user = (User)principal;
             model.addAttribute("name",user.getUsername());

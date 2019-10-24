@@ -41,12 +41,12 @@ public class Result<T> {
         if(result == null)
         {
             this.code = -1;
+            this.success = false;
         }
         else
         {
             this.code = code;
         }
-        this.success = false;
         this.data = result;
         this.msg = msg;
     }
