@@ -176,38 +176,54 @@ public class HospitalService {
     /**
      * 修改医院信息
      */
-//    public Result updateHospital(Hospital hospital) {
-//        try {
-//            //取出更改后的医院名称
-//            String hospitalName = hospital.getHospitalName();
-//            //取出医院id
-//            Integer id = hospital.getId();
-//            //通过id进行查询
-//            Hospital byId = hospitalDao.findById(id);
-//            //判断如果修改后的名称和修改前的名称不一致
-//            if (!byId.getHospitalName().equals(hospitalName)) {
-//                //通过修改后的名称进行查询数据库中是否存在
-//                Hospital byHospitalName = hospitalDao.findByHospitalName(hospitalName);
-//                //如果数据库中存在
-//
-//                String hospitalCode = hospital.getHospitalCode();
-//                if (b)
-//
-//                if (byHospitalName != null) {
-//                    return new Result(-1,"当前医院名称已存在");
-//                }
-//            }
-//            //修改后保存当前时间
-//            hospital.setUpdateTime(new Date());
-//            //保存前端传过来的所有信息
-//            Hospital save = hospitalDao.save(hospital);
-//            //返回保存的信息
-//            return new Result(save);
-//        } catch (Exception e) {
-//            logger.error("【修改医院信息异常】" + hospital + e);
-//            return new Result(-1, "修改医院信息异常");
-//        }
-//    }
+    public Result updateHospital(Hospital hospital) {
+        try {
+            //取出更改后的医院名称
+            String hospitalName = hospital.getHospitalName();
+
+            //取出医院id
+            Integer id = hospital.getId();
+
+            //通过id进行查询
+            Hospital byId = hospitalDao.findById(id);
+
+            //判断如果修改后的名称和修改前的名称不一致
+            if (!byId.getHospitalName().equals(hospitalName)) {
+
+                //通过修改后的名称进行查询数据库中是否存在
+                Hospital byHospitalName = hospitalDao.findByHospitalName(hospitalName);
+
+                //取出修改后的医院编码
+                String hospitalCode = hospital.getHospitalCode();
+
+                //判断原医院编码和修改后的医院编码不一致
+                if (!byId.getHospitalCode().equals(hospitalCode)) {
+
+                    //通过医院编码查数据库中是否存在此编码
+                    Hospital byHospitalCode = hospitalDao.findByHospitalCode(hospitalCode);
+
+                    //如果数据库存在此医院编码
+                    if (byHospitalCode != null) {
+                        return new Result(-1, "当前医院编码已存在");
+                    }
+                }
+
+                //如果数据库存在此医院名称
+                if (byHospitalName != null) {
+                    return new Result(-1, "当前医院名称已存在");
+                }
+            }
+            //修改后保存当前时间
+            hospital.setUpdateTime(new Date());
+            //保存前端传过来的所有信息
+            Hospital save = hospitalDao.save(hospital);
+            //返回保存的信息
+            return new Result(0, "修改医院信息成功", "");
+        } catch (Exception e) {
+            logger.error("【修改医院信息异常】" + hospital + e);
+            return new Result(-1, "修改医院信息异常");
+        }
+    }
 
 
     /**
@@ -217,7 +233,7 @@ public class HospitalService {
         try {
             //根据医院id进行删除
             hospitalDao.deleteById(id);
-            return new Result("成功删除此药品");
+            return new Result(0, "成功删除此医院", "");
         } catch (Exception e) {
             logger.error("【删除医院信息异常】" + id + e);
             return new Result(-1, "删除医院信息异常");
