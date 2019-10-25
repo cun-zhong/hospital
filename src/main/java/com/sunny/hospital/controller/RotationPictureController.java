@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/16 16:21
- * @Description: TODO 科室控制器
+ * @Description: TODO 轮播图片控制器
  * @Version 1.0
  */
 @Controller
