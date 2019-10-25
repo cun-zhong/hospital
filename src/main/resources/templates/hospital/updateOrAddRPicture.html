@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>轮播图管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" href="static/layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <div class="layui-input-inline">
+        <input type="hidden" name="id" th:value="${image.id}">
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属医院</label>
+        <div class="layui-input-inline">
+            <input type="text" name="hospitalName" th:value="${image.getHospitalName()}" lay-verify="required" placeholder="请输入医院名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片描述</label>
+        <div class="layui-input-inline">
+            <input type="text" name="hospitalCode" th:value="${image.getPictureName()}" lay-verify="required" placeholder="请输入号码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片</label>
+        <div class="layui-upload" style="margin-left: 110px;position: relative">
+            <button type="button" class="layui-btn" id="fileUpload" style="margin: 2.5px 0px 2.5px 10px;position: absolute;top: 0px;">
+                <i class="layui-icon">&#xe681;</i>选择照片
+            </button>
+            <div class="layui-upload-list" th:switch="${#strings.isEmpty(image.getPictureUrl())}">
+                <img class="layui-upload-img"  id="img" th:case="true" src="" width="100" height="100" style="display: none;position: absolute;left: 150px;" >
+                <img class="layui-upload-img"  id="img" th:case="false" th:src="${image.getPictureUrl()}" width="100" height="100" style="position: absolute;left: 150px;" >
+            </div>
+            <input type="hidden" id="hospitalHeadImage" name="pictureUrl" th:value="${image.getPictureUrl()}">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script src="static/layuiadmin/layui/layui.js"></script>
+<script src="static/js/imageUpload.js"></script>
+<script>
+    layui.config({
+        base: 'static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+
+        //监听提交
+        form.on('submit(layuiadmin-app-form-submit)', function(data){
+            var field = data.field; //获取提交的字段
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+            //console.log(field)//打印日志
+            //layer.msg(JSON.stringify(field));//表格数据序列化
+
+            //提交数据
+            $.ajax({
+                type: "post",  //数据提交方式（post/get）
+                contentType:"application/json",//数据提交格式
+                url: "rotationPicture/updateRotationPicture",  //提交到的url
+                data: JSON.stringify(field),
+                dataType: "json",//返回的数据类型格式
+                success: function(msg){
+                    if (msg.success){
+                        //成功
+                        parent.layer.msg(msg.msg, { icon: 1, time: 1500 });
+                        parent.layui.table.reload('LAY-app-content-list'); //重载表格
+                        parent.layer.close(index); //再执行关闭
+                    }else {
+                        //失败
+                        parent.layer.alert(msg.msg, { icon: 2},function () {
+                            parent.layer.close(index);
+                        });
+                    }
+                }
+            });
+            // return false;//false：阻止表单跳转  true：表单跳转
+        });
+    })
+</script>
+</body>
+</html>

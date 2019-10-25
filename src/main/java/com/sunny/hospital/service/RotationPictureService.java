@@ -27,6 +27,12 @@ public class RotationPictureService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 查询轮播图
+     * */
+    public RotationPicture findById(Integer id){
+        return rotationPictureDao.findById(id);
+    }
 
     /**
      * 修改轮播图片信息
@@ -47,6 +53,10 @@ public class RotationPictureService {
      */
     public Result findAll() {
         List<RotationPicture> all = rotationPictureDao.findAll();
-        return new Result(0, "查询成功", "");
+        return new Result(all);
+    }
+
+    public List<RotationPicture> findAllRotationPicture(){
+        return rotationPictureDao.findAll();
     }
 }

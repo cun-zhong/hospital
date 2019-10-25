@@ -37,5 +37,5 @@ public class RotationPicture {
     private String  pictureName;
 
     //图片地址
-    private String pictureImage;
+    private String pictureUrl;
 }

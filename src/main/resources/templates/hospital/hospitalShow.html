@@ -31,20 +31,8 @@
                              lay-arrow="hover"
                              style="width: 80%; height: 400px;">
                             <div carousel-item="">
-                                <div class="layui-this"><img
-                                        src="http://孙宇豪.online:8080/images/d54d47fc-2573-4ee1-bd19-c6dbcab0e669.jpg">
-                                </div>
-                                <div class=""><img
-                                        src="http://孙宇豪.online:8080/images/5ce12b45-d372-4bde-85e9-7badd3a88f37.jpg">
-                                </div>
-                                <div class=""><img
-                                        src="http://孙宇豪.online:8080/images/f21f00d3-3dbc-4be6-a72e-b51d57330dde.jpg">
-                                </div>
-                                <div class=""><img
-                                        src="http://xn--r8s0d654n.online:8080/images/f18156b1-bc03-49b9-b0e0-7b14b3797a33.jpg">
-                                </div>
-                                <div class=""><img
-                                        src="http://xn--r8s0d654n.online:8080/images/6be55a59-133a-430e-9904-e79553bf8fc1.jpg">
+                                <div class="" th:each="image,imageStat:${images}" ><img
+                                        th:src="${image.getPictureUrl()}">
                                 </div>
                             </div>
                             <div class="layui-carousel-ind">
@@ -210,31 +198,14 @@
 
         var carousel = layui.carousel
             , form = layui.form;
-        //常规轮播
-        carousel.render({
-            elem: '#test-carousel-normal'
-            , arrow: 'always'
-        });
 
-        //改变下时间间隔、动画类型、高度
-        carousel.render({
-            elem: '#test-carousel-normal-2'
-            , interval: 1800
-            , anim: 'fade'
-            , height: '120px'
-        });
-
-        //设定各种参数
-        var ins3 = carousel.render({
-            elem: '#test-carousel-demo'
-        });
         //图片轮播
         carousel.render({
             elem: '#test-carousel-img'
             , width: '100%'
             // , height: (W/b).toString()+"px"
             , height: "440px"
-            , interval: 5000
+            , interval: 1800
         });
 
 

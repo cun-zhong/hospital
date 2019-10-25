@@ -7,15 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/16 16:21
- * @Description: TODO 轮播图片控制器
+ * @Description: TODO 科室控制器
  * @Version 1.0
  */
 @Controller
@@ -27,6 +25,27 @@ public class RotationPictureController {
     @Autowired
     private RotationPictureService rotationPictureService;
 
+    /**
+     * 轮播管理页面
+     * */
+    @GetMapping("rotationPictureManage")
+    public String rotationPicture(){
+        return "hospital/rotationPicture";
+    }
+
+    /**
+     * 编辑轮播图页面
+     * */
+    @GetMapping("updateOrAddPage")
+    public String updateOrAddPage(Integer id, ModelMap modelMap){
+        if (id!=null){
+            RotationPicture byId = rotationPictureService.findById(id);
+            modelMap.addAttribute("image",byId);
+        }else {
+            modelMap.addAttribute("image",new RotationPicture());
+        }
+        return "hospital/updateOrAddRPicture";
+    }
 
     /**
      * 修改轮播图片信息
