@@ -16,12 +16,24 @@
     <div class="layui-input-inline">
       <input type="hidden" name="id" th:value="${dept.id}">
     </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">科室名称</label>
+    <div class="layui-form-item" th:if="${#strings.isEmpty(dept.getHospitalCode())}">
+      <label class="layui-form-label">医院名称</label>
       <div class="layui-input-inline">
-        <input type="text" name="hisDepartmentName" th:value="${dept.getHisDepartmentName()}" lay-verify="required" placeholder="请输入科室名称" autocomplete="off" class="layui-input">
+        <select name="hospitalCode" >
+          <option value="">请选择医院</option>
+          <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalCode()}" th:text="${hospital.getHospitalName()}"></option>
+        </select>
       </div>
     </div>
+    <div class="layui-input-inline" th:if="${not #strings.isEmpty(dept.getHospitalCode())}">
+      <input type="hidden" name="hospitalCode" th:value="${dept.getHospitalCode()}">
+    </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">科室名称</label>
+    <div class="layui-input-inline">
+      <input type="text" name="hisDepartmentName" th:value="${dept.getHisDepartmentName()}" lay-verify="required" placeholder="请输入科室名称" autocomplete="off" class="layui-input">
+    </div>
+  </div>
     <div class="layui-form-item">
       <label class="layui-form-label">科室介绍</label>
       <div class="layui-input-inline">
@@ -55,16 +67,16 @@
 
       var url="";
       if (!field.id){
-        url="addHospital";
+        url="addDepartment";
       }else {
-        url="updateHospital";
+        url="updateDepartment";
       }
 
       //提交数据
       $.ajax({
         type: "post",  //数据提交方式（post/get）
         contentType:"application/json",//数据提交格式
-        url: "hospital/"+url,  //提交到的url
+        url: "department/"+url,  //提交到的url
         data: JSON.stringify(field),
         dataType: "json",//返回的数据类型格式
         success: function(msg){

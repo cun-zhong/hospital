@@ -160,7 +160,9 @@ public class DepartmentService {
             String hisDepartmentName = jsonObject.getString("hisDepartmentName");
             String hospitalCode = jsonObject.getString("hospitalCode");
             //拼接hospitalCode
-            sb.append("where  hospital_code='" + hospitalCode + "'");
+            if (StringUtils.isNotEmpty(hospitalCode)){
+                sb.append("and  hospital_code='" + hospitalCode + "'");
+            }
             //判断科室名称是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(hisDepartmentName)) {
                 sb.append(" and his_department_name like '%" + hisDepartmentName + "%'");
@@ -177,7 +179,7 @@ public class DepartmentService {
                 pageSize = jsonObject.getInt("pageSize");
             }
             //查询总条数
-            String countSql = "select count(*) as count from department " + sb.toString();
+            String countSql = "select count(*) as count from department where id>0 " + sb.toString();
             Map<String, Object> countMap = jdbcTemplate.queryForMap(countSql);
             Integer allCount = Integer.valueOf(countMap.get("count").toString());
             //分页条件处理
@@ -186,7 +188,7 @@ public class DepartmentService {
             int rowPerPage = pager.getRowPerPage();
             //查询数据
             StringBuilder dataSql = new StringBuilder();
-            dataSql.append("select * from department ");
+            dataSql.append("select * from department where id>0 ");
             dataSql.append(sb);
             //按倒序方式排列并分页
             dataSql.append(" order by created_time desc limit " + firstRow + "," + rowPerPage);

@@ -55,6 +55,8 @@ public class DepartmentController {
             Department byId = departmentService.findById(id);
             modelMap.addAttribute("dept",byId);
         }else {
+            List<Hospital> all = hospitalService.findAll();
+            modelMap.addAttribute("hospitals",all);
             modelMap.addAttribute("dept",new Department());
         }
         return "department/updateOrAddDepartment";

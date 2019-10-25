@@ -33,7 +33,7 @@ layui.define(['table', 'form'], function(exports){
             ,{field: 'hospitalCode', title: '医院编码'}
             ,{field: 'hisDepartmentName', title: '科室名称', minWidth: 100}
             ,{field: 'introduction', title: '科室介绍'}
-            ,{field: 'createTime', title: '创建时间',sort: true}
+            ,{field: 'createdTime', title: '创建时间',sort: true}
             // ,{field: 'status', title: '发布状态', templet: '#buttonTpl', minWidth: 80, align: 'center'}
             ,{title: '操作', minWidth: 150, align: 'center', fixed: 'right', toolbar: '#table-content-list'}
         ]]
@@ -50,7 +50,7 @@ layui.define(['table', 'form'], function(exports){
         if(obj.event === 'del'){
             layer.confirm('确定删除吗？', function (index) {
                 $.ajax({
-                    url: "hospital/deleteById?id=" + data.id,
+                    url: "department/deleteById?id=" + data.id,
                     type: "get",
                     dataType: "json",
                     success: function (data) {
@@ -68,32 +68,14 @@ layui.define(['table', 'form'], function(exports){
             layer.open({
                 type: 2
                 ,title: '编辑文章'
-                ,content: 'hospital/updateOrAddHospital?id='+ data.id
+                ,content: 'department/updateOrAddDepartment?id='+ data.id
                 ,maxmin: true
                 ,area: ['550px', '550px']
                 ,btn: ['确定', '取消']
                 ,yes: function(index, layero){
-                    var iframeWindow = window['layui-layer-iframe'+ index]
-                        ,submit = layero.find('iframe').contents().find("#layuiadmin-app-form-edit");
-
-                    //监听提交
-                    iframeWindow.layui.form.on('submit(layuiadmin-app-form-edit)', function(data){
-                        var field = data.field; //获取提交的字段
-
-                        // //提交 Ajax 成功后，静态更新表格中的数据
-                        // //$.ajax({});
-                        // obj.update({
-                        //     label: field.label
-                        //     ,title: field.title
-                        //     ,author: field.author
-                        //     ,status: field.status
-                        // }); //数据更新
-
-                        form.render();
-                        layer.close(index); //关闭弹层
-                    });
-
-                    submit.trigger('click');
+                    //点击确认触发 iframe 内容中的按钮提交
+                    var submit = layero.find('iframe').contents().find("#layuiadmin-app-form-submit");
+                    submit.click();
                 }
             });
         }
