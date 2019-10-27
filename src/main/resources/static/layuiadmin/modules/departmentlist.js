@@ -24,13 +24,13 @@ layui.define(['table', 'form'], function(exports){
             ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
         ,where:{
-            hospitalCode:'',
+            hospitalName:'',
             hisDepartmentName:''
         }
         ,cols: [[
             {type: 'numbers',  fixed: true}
             ,{field: 'id', width: 100, title: '科室编号', sort: true}
-            ,{field: 'hospitalCode', title: '医院编码'}
+            ,{field: 'hospitalName', title: '医院名称'}
             ,{field: 'hisDepartmentName', title: '科室名称', minWidth: 100}
             ,{field: 'introduction', title: '科室介绍'}
             ,{field: 'createdTime', title: '创建时间',sort: true}

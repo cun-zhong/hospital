@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>科室管理</title>
+    <title>医生管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -19,7 +19,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">医院名称</label>
                     <div class="layui-input-inline">
-                        <select name="hospitalName" >
+                        <select name="hospitalName" lay-filter="hospitalName">
                             <option value="">请选择医院</option>
                             <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalName()}" th:text="${hospital.getHospitalName()}"></option>
                         </select>
@@ -28,7 +28,10 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">科室名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="hisDepartmentName" placeholder="请输入" autocomplete="off" class="layui-input">
+                        <select name="hisDepartmentName" >
+                            <option value="">请选择医科室</option>
+<!--                            <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalName()}" th:text="${hospital.getHospitalName()}"></option>-->
+                        </select>
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -72,6 +75,31 @@
     }).use(['index', 'departmentlist', 'table'], function(){
         var table = layui.table
             ,form = layui.form;
+
+        //多级选择框 医院-科室
+        form.on('select(hospitalName)', function(data){
+            console.log(data)
+            $.ajax({
+                url:"department/findAllByHospitalName?hospitalName="+data.value,
+                // data:{tid:data.value},
+                type:"get",
+                success:function(datas){
+                    $("select[name=hisDepartmentName]").html('<option value="">请选择科室</option>'); //清空
+                    var result=datas.data;
+                    if(result!=null){
+                        $.each(result, function(key, val) {
+                            var option1 = $("<option>").val(val.hisDepartmentName).text(val.hisDepartmentName);
+                            $("select[name=hisDepartmentName]").append(option1);
+                            form.render('select');
+                        });
+                    }else{
+                        form.render('select');
+                    }
+                    $("select[name=hisDepartmentName]").get(0).selectedIndex=0;
+                }
+            });
+
+        });
 
         //监听搜索
         form.on('submit(LAY-app-contlist-search)', function(data){

@@ -5,6 +5,7 @@ import com.sunny.hospital.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * @Author: 孙宇豪
@@ -25,6 +26,9 @@ public interface DepartmentDao extends JpaRepository<Department,Long> {
 
     //根据科室id进行删除科室信息
     void deleteById(Integer id);
+
+    //根据医院名称查科室
+    List<Department> findAllByHospitalName(String name);
 
 
 }

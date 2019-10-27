@@ -7,6 +7,7 @@ import com.sunny.hospital.entity.Result;
 import com.sunny.hospital.service.DepartmentService;
 import com.sunny.hospital.service.HospitalService;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ import java.util.List;
  * @Description: TODO 科室控制器
  * @Version 1.0
  */
+@SuppressWarnings("unchecked")
 @Controller
 @RequestMapping(value = "department")
 public class DepartmentController {
@@ -35,6 +38,22 @@ public class DepartmentController {
 
     @Autowired
     private HospitalService hospitalService;
+
+    /**
+     * 根据医院查科室
+     * */
+    @GetMapping("findAllByHospitalName")
+    @ResponseBody
+    public Result findAllByHospitalName(String hospitalName){
+        if (StringUtils.isEmpty(hospitalName)){
+            return new Result(-1,"医院名称不能为空");
+        }
+        List<Department> allByHospitalName = departmentService.findAllByHospitalName(hospitalName);
+        if (allByHospitalName==null || allByHospitalName.size()==0){
+            return new Result(-1,"未查询到科室",new ArrayList<Department>());
+        }
+        return new Result(allByHospitalName);
+    }
 
     /**
      * 管理医院页面
