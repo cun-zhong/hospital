@@ -54,7 +54,7 @@ public class DoctorService {
             doctor.setUpdatedTime(new Date());
             //获取要传入的医生名称
             String name = doctor.getName();
-            //判断新天机的医生姓名不能为空
+            //判断新添加的医生姓名不能为空
             if (StringUtils.isNotEmpty(name)) {
                 //保存前端传过来的数据
                 doctorDao.save(doctor);

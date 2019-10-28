@@ -61,11 +61,11 @@ public class DataInit {
 //        admin.setRoles(roles);
 //        userInfoRepository.save(admin);
 //
-//        UserInfo user = new UserInfo();
-//        user.setUsername("user");
-//        user.setPassword(passwordEncoder.encode("123"));
-//        user.setRoles(roles3);
-//        userInfoRepository.save(user);
+//        UserInfo User = new UserInfo();
+//        User.setUsername("User");
+//        User.setPassword(passwordEncoder.encode("123"));
+//        User.setRoles(roles3);
+//        userInfoRepository.save(User);
 //
 //        System.out.println("【开始初始化动态权限信息】");
 //        //基于URL的动态权限

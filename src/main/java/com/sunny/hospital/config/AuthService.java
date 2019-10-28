@@ -60,7 +60,7 @@ public class AuthService {
         Map<String, Collection<ConfigAttribute>> map =  permissionService.getPermissionMap();
 
         //String uri = request.getRequestURI();
-        //这种获取方式不好，不支持/user/**的匹配方式。
+        //这种获取方式不好，不支持/User/**的匹配方式。
         //Collection<ConfigAttribute> configAttributes = map.get(uri);
 
         Collection<ConfigAttribute> configAttributes = null;
