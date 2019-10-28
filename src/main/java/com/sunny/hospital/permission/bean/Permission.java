@@ -20,7 +20,7 @@ public class Permission {
     private String description;//权限描述.
 
     /**
-     *  注意：Permission 表的url通配符为两颗星，比如说 /user下的所有url，应该写成 /user/**;
+     *  注意：Permission 表的url通配符为两颗星，比如说 /user下的所有url，应该写成 /User/**;
      */
     private String url;//授权链接
 

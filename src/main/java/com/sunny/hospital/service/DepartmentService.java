@@ -39,6 +39,14 @@ public class DepartmentService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
+     * 根据医院查科室
+     * */
+    public List<Department> findAllByHospitalName(String hospitalName){
+        List<Department> allByHospitalName = departmentDao.findAllByHospitalName(hospitalName);
+        return allByHospitalName;
+    }
+
+    /**
      * 根据id查询科室
      * */
     public Department findById(Integer id){
@@ -158,10 +166,10 @@ public class DepartmentService {
         try {
             StringBuilder sb = new StringBuilder(); //创建拼接对象
             String hisDepartmentName = jsonObject.getString("hisDepartmentName");
-            String hospitalCode = jsonObject.getString("hospitalCode");
+            String hospitalName = jsonObject.getString("hospitalName");
             //拼接hospitalCode
-            if (StringUtils.isNotEmpty(hospitalCode)){
-                sb.append("and  hospital_code='" + hospitalCode + "'");
+            if (StringUtils.isNotEmpty(hospitalName)){
+                sb.append("and  hospital_name='" + hospitalName + "'");
             }
             //判断科室名称是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(hisDepartmentName)) {

@@ -13,29 +13,34 @@ import java.util.Date;
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/21 16:21
- * @Description: 科室实体类对象
+ * @Description: 就诊人实体类对象
  * @Version 1.0
  */
 @Entity
-@Table(name = "department")
+@Table(name = "user")
 @DynamicInsert
 @DynamicUpdate
 @ToString
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Department {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    //医院编码
-    private String hospitalCode;
-    //医院名称
-    private String hospitalName;
-    //医院科室名称
-    private String hisDepartmentName;
-    //医院科室介绍
-    private String introduction;
+    //姓名
+    private String name;
+    //身份证号
+    private String idCard;
+    //性别  1男2女
+    private Integer gender;
+    //手机号
+    private String mobile;
+    //密码
+    private String password;
+    //积分
+    private Integer integral;
+
     //创建时间
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
@@ -44,5 +49,4 @@ public class Department {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date updatedTime;
-
 }

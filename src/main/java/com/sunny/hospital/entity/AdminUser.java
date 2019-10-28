@@ -13,29 +13,27 @@ import java.util.Date;
 /**
  * @Author: 孙宇豪
  * @Date: 2019/10/21 16:21
- * @Description: 科室实体类对象
+ * @Description: 管理员实体类对象
  * @Version 1.0
  */
 @Entity
-@Table(name = "department")
+@Table(name = "admin_user")
 @DynamicInsert
 @DynamicUpdate
 @ToString
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Department {
+public class AdminUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    //医院编码
-    private String hospitalCode;
-    //医院名称
-    private String hospitalName;
-    //医院科室名称
-    private String hisDepartmentName;
-    //医院科室介绍
-    private String introduction;
+    //管理员用户名
+    private String adminName;
+    //管理员密码
+    private String adminPassword;
+    //角色权限
+    private String userRole;
     //创建时间
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
