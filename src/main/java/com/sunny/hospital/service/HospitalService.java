@@ -52,7 +52,7 @@ public class HospitalService {
      * @param id
      * @return
      */
-    public Hospital findbyid(Integer id) {
+    public Hospital findbyId(Integer id) {
         //调用dao层的findById方法进行查询
         return hospitalDao.findById(id);
     }

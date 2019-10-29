@@ -1,10 +1,238 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>医生-编辑和添加</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" href="static/layuiadmin/layui/css/layui.css" media="all">
 </head>
 <body>
 
+<div class="layui-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <div class="layui-input-inline">
+        <input type="hidden" id="id" name="id" th:value="${doctor.id}">
+    </div>
+    <div class="layui-form-item" th:if="${#strings.isEmpty(doctor.hospitalName)}" >
+        <label class="layui-form-label">医院名称</label>
+        <div class="layui-input-inline">
+            <select name="hospitalName" lay-filter="hospitalName">
+                <option value="">请选择医院</option>
+                <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalName()}" th:text="${hospital.getHospitalName()}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="" th:if="${not #strings.isEmpty(doctor.hospitalName)}">
+        <input type="hidden" name="hospitalName" th:value="${doctor.hospitalName}">
+        <input type="hidden" name="hisDepartmentName" th:value="${doctor.hisDepartmentName}">
+    </div>
+    <div class="layui-form-item" th:if="${#strings.isEmpty(doctor.hospitalName)}">
+        <label class="layui-form-label">科室名称</label>
+        <div class="layui-input-inline">
+            <select name="hisDepartmentName" >
+                <option value="" >请选择医科室</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">医生名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" th:value="${doctor.name}" lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系方式</label>
+        <div class="layui-input-inline">
+            <input type="text" name="tel" th:value="${doctor.tel}" lay-verify="required" placeholder="请输入联系方式" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">职称</label>
+        <div class="layui-input-inline">
+            <select name="level" th:field="${doctor.title}" th:value="${doctor.title}" lay-verify="required">
+                <option value="">请选择</option>
+                <option th:selected="${doctor.getTitle()=='主治医师'}" value="主治医师">主治医师</option>
+                <option th:selected="${doctor.getTitle()=='主任医师'}" value="主任医师">主任医师</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-inline">
+            <select name="level" th:field="${doctor.gender}" th:value="${doctor.gender}" lay-verify="required">
+                <option value="">请选择</option>
+                <option th:selected="${doctor.gender=='男'}" value="1">男</option>
+                <option th:selected="${doctor.gender=='女'}" value="2">女</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">介绍</label>
+        <div class="layui-input-inline">
+            <textarea name="introduce" th:value="${doctor.getIntroduce()}" th:text="${doctor.getIntroduce()}" lay-verify="required" style="width: 400px; height: 150px;" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item" id="divpeople">
+        <label class="layui-form-label">每小时挂号</label>
+        <div class="layui-input-block">
+            <input class="layui-input" type="text" name="hourPeople" id="hourPeople" th:value="${doctor.hourPeople}" placeholder="请输入每小时挂号上限" lay-verify="hourPeople"/>
+        </div>
+    </div>
+    <div class="layui-form-item" id="divtime">
+        <label class="layui-form-label">出诊时间</label>
+        <div class="layui-input-block">
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="1" title="周一上午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="2" title="周一下午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="3" title="周二上午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="4" title="周二下午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="5" title="周三上午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="6" title="周三下午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="7" title="周四上午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="8" title="周四下午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="9" title="周五上午"/>
+            <input type="checkbox"  lay-filter="dtime" name="dtime" value="10" title="周五下午"/>
+        </div>
+        <input class="layui-input" type="hidden"  name="time" id="time" lay-filter="time"/>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">医生头像</label>
+        <div class="layui-upload" style="margin-left: 110px;position: relative">
+            <button type="button" class="layui-btn" id="fileUpload" style="margin: 2.5px 0px 2.5px 10px;position: absolute;top: 0px;">
+                <i class="layui-icon">&#xe681;</i>选择照片
+            </button>
+            <!-- ${} 里面不能再嵌套 ${} 直接取值就好了 -->
+            <div class="layui-upload-list" th:switch="${#strings.isEmpty(doctor.headUrl)}">
+                <img class="layui-upload-img"  id="img" th:case="true" src="" width="100" height="100" style="display: none;position: absolute;left: 150px;" >
+                <img class="layui-upload-img"  id="img" th:case="false" th:src="${doctor.headUrl}" width="100" height="100" style="position: absolute;left: 150px;" >
+            </div>
+            <input type="hidden" id="hospitalHeadImage" name="headUrl" th:value="${doctor.headUrl}">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-submit" id="layuiadmin-app-form-submit" value="确认添加">
+        <input type="button" lay-submit lay-filter="layuiadmin-app-form-edit" id="layuiadmin-app-form-edit" value="确认编辑">
+    </div>
+</div>
+
+<script src="static/layuiadmin/layui/layui.js"></script>
+<script src="static/js/imageUpload.js"></script>
+
+<script>
+    layui.config({
+        base: 'static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+
+        //多级选择框 医院-科室
+        form.on('select(hospitalName)', function(data){
+            console.log(data)
+            $.ajax({
+                url:"department/findAllByHospitalName?hospitalName="+data.value,
+                // data:{tid:data.value},
+                type:"get",
+                success:function(datas){
+                    $("select[name=hisDepartmentName]").html('<option value="">请选择科室</option>'); //清空
+                    var result=datas.data;
+                    if(result!=null){
+                        $.each(result, function(key, val) {
+                            var option1 = $("<option>").val(val.hisDepartmentName).text(val.hisDepartmentName);
+                            $("select[name=hisDepartmentName]").append(option1);
+                            form.render('select');
+                        });
+                    }else{
+                        form.render('select');
+                    }
+                    $("select[name=hisDepartmentName]").get(0).selectedIndex=0;
+                }
+            });
+
+        });
+
+        //医生出诊时间checkbox监听
+        form.on('checkbox(dtime)', function(data){
+            //每次复选框被勾选或者取消勾选，重新计算值
+            var time = $("input[name='dtime']:checked");
+            var times = "";
+            if (time.length>0){
+                for (var i=0;i<time.length;i++){
+                    times += time[i].value + ",";
+                }
+            }
+            $("#time").val(times);
+        });
+
+        //获取医生排班
+        var doctorId=$("#id").val();
+        if (doctorId){
+            $.ajax({
+                url:"doctor/findDoctorById?id="+doctorId,
+                dateType:"json",
+                type:"get",
+                success:function(data){
+                    $("#time").val(data.time);
+                    if (data.time != null && data.time != ''){
+                        var times = $("input[name='dtime']");
+                        var timeArr = data.time.split(",");
+                        for (var i = 0; i < times.length; i++) {
+                            if (timeArr.indexOf($(times[i]).val()) != -1){
+                                $(times[i]).prop("checked", true);
+                            }
+                        }
+                        form.render('checkbox');
+                    }
+                }
+            });
+        }
+
+        //监听提交
+        form.on('submit(layuiadmin-app-form-submit)', function(data){
+            var field = data.field; //获取提交的字段
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+            //console.log(field)//打印日志
+            //layer.msg(JSON.stringify(field));//表格数据序列化
+
+            var url="";
+            if (!field.id){
+                url="addDoctor";
+            }else {
+                url="updateDoctor";
+            }
+
+            //提交数据
+            $.ajax({
+                type: "post",  //数据提交方式（post/get）
+                contentType:"application/json",//数据提交格式
+                url: "doctor/"+url,  //提交到的url
+                data: JSON.stringify(field),
+                dataType: "json",//返回的数据类型格式
+                success: function(msg){
+                    if (msg.success){
+                        //成功
+                        parent.layer.msg(msg.msg, { icon: 1, time: 1500 });
+                        parent.layui.table.reload('LAY-app-content-list'); //重载表格
+                        parent.layer.close(index); //再执行关闭
+                    }else {
+                        //失败
+                        parent.layer.alert(msg.msg, { icon: 2},function () {
+                            parent.layer.close(index);
+                        });
+                    }
+                }
+            });
+            // return false;//false：阻止表单跳转  true：表单跳转
+        });
+    })
+</script>
 </body>
 </html>

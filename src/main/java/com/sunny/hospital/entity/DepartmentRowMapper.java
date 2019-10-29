@@ -23,6 +23,7 @@ public class DepartmentRowMapper implements RowMapper, Serializable {
         department.setIntroduction(resultSet.getString("introduction"));
         department.setCreatedTime(resultSet.getDate("created_time"));
         department.setUpdatedTime(resultSet.getDate("updated_time"));
+        department.setHospitalName(resultSet.getString("hospital_name"));
         return department;
     }
 }

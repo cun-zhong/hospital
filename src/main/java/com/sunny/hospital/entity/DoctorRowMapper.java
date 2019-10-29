@@ -21,7 +21,6 @@ public class DoctorRowMapper implements RowMapper, Serializable {
         doctor.setHisDepartmentId(resultSet.getString("his_department_id"));
         doctor.setName(resultSet.getString("name"));
         doctor.setHisDepartmentName(resultSet.getString("his_department_name"));
-        doctor.setFeat(resultSet.getString("feat"));
         doctor.setIntroduce(resultSet.getString("introduce"));
         doctor.setTitle(resultSet.getString("title"));
         doctor.setTel(resultSet.getString("tel"));

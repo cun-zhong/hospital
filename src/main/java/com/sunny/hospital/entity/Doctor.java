@@ -38,8 +38,6 @@ public class Doctor {
     private String name;
     //his的科室名称
     private String hisDepartmentName;
-    //医生擅长
-    private String feat;
     //医生介绍
     private String introduce;
     //医生职称

@@ -68,7 +68,7 @@ public class HospitalController {
     @GetMapping("updateOrAddHospital")
     public String updateOrAddHospital(Integer id, ModelMap modelMap){
         if (id!=null){
-            Hospital findbyid = hospitalService.findbyid(id);
+            Hospital findbyid = hospitalService.findbyId(id);
             modelMap.addAttribute("hospital",findbyid);
         }else {
             modelMap.addAttribute("hospital",new Hospital());

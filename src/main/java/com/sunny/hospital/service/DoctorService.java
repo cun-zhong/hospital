@@ -44,6 +44,13 @@ public class DoctorService {
 
 
     /**
+     * 根据id查医生
+     * */
+    public Doctor findById(Integer id){
+        return doctorDao.findById(id);
+    }
+
+    /**
      * 添加医生信息
      */
     public Result addDoctor(Doctor doctor) {

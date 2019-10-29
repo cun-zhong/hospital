@@ -29,9 +29,14 @@
                     <label class="layui-form-label">科室名称</label>
                     <div class="layui-input-inline">
                         <select name="hisDepartmentName" >
-                            <option value="">请选择医科室</option>
-<!--                            <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalName()}" th:text="${hospital.getHospitalName()}"></option>-->
+                            <option value="">请选择科室</option>
                         </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">医生名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-inline">
@@ -49,7 +54,7 @@
             </div>
             <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
             <script type="text/html" id="imgTpl">
-                <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.hospitalHeadImage }}>
+                <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.headUrl }}>
             </script>
             <script type="text/html" id="buttonTpl">
                 {{#  if(d.status){ }}
@@ -72,7 +77,7 @@
         base: 'static/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'departmentlist', 'table'], function(){
+    }).use(['index', 'doctorlist', 'table'], function(){
         var table = layui.table
             ,form = layui.form;
 
@@ -117,8 +122,8 @@
             add: function(){
                 layer.open({
                     type: 2
-                    ,title: '添加科室'
-                    ,content: 'department/updateOrAddDepartment'//弹出编辑页面
+                    ,title: '添加医生'
+                    ,content: 'doctor/updateOrAddDoctor'//弹出编辑页面
                     ,maxmin: true
                     ,area: ['550px', '550px']
                     ,btn: ['确定', '取消']
