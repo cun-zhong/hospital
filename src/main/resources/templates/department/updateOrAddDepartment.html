@@ -19,25 +19,22 @@
     <div class="layui-form-item" th:if="${#strings.isEmpty(dept.getHospitalCode())}">
       <label class="layui-form-label">医院名称</label>
       <div class="layui-input-inline">
-        <select name="hospitalCode" >
+        <select name="hospitalName" >
           <option value="">请选择医院</option>
-          <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalCode()}" th:text="${hospital.getHospitalName()}"></option>
+          <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalName()}" th:text="${hospital.getHospitalName()}"></option>
         </select>
       </div>
-    </div>
-    <div class="layui-input-inline" th:if="${not #strings.isEmpty(dept.getHospitalCode())}">
-      <input type="hidden" name="hospitalCode" th:value="${dept.getHospitalCode()}">
     </div>
     <div class="layui-form-item">
     <label class="layui-form-label">科室名称</label>
     <div class="layui-input-inline">
-      <input type="text" name="name" th:value="${dept.getHisDepartmentName()}" lay-verify="required" placeholder="请输入科室名称" autocomplete="off" class="layui-input">
+      <input type="text" name="hisDepartmentName" th:value="${dept.getHisDepartmentName()}" lay-verify="required" placeholder="请输入科室名称" autocomplete="off" class="layui-input">
     </div>
   </div>
     <div class="layui-form-item">
       <label class="layui-form-label">科室介绍</label>
       <div class="layui-input-inline">
-        <textarea name="feat" th:value="${dept.introduction}" lay-verify="required" style="width: 400px; height: 150px;" autocomplete="off" class="layui-textarea"></textarea>
+        <textarea name="introduction" th:value="${dept.introduction}" th:text="${dept.introduction}" lay-verify="required" style="width: 400px; height: 150px;" autocomplete="off" class="layui-textarea"></textarea>
       </div>
     </div>
 

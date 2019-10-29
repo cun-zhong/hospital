@@ -60,7 +60,7 @@ public class RotationPictureController {
     /**
      * 查看所有轮播图片信息
      */
-    @PostMapping("findAll")
+    @GetMapping("findAll")
     @ResponseBody
     public  Result findAll(){
         return rotationPictureService.findAll();

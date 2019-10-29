@@ -17,6 +17,7 @@ layui.define(['table', 'form'], function(exports){
     table.render({
         elem: '#LAY-app-content-list'
         ,url: 'rotationPicture/findAll' //模拟接口
+        ,method:'get'
         ,cols: [[
             {type: 'numbers',  fixed: true}
             ,{field: 'id', width: 100, title: '图片编号', sort: true}
@@ -34,8 +35,8 @@ layui.define(['table', 'form'], function(exports){
         if(obj.event === 'edit'){
             layer.open({
                 type: 2
-                ,title: '编辑文章'
-                ,content: 'rotationPicture/updateRotationPicture?id='+ data.id
+                ,title: '编辑图片'
+                ,content: 'rotationPicture/updateOrAddPage?id='+ data.id
                 ,maxmin: true
                 ,area: ['550px', '550px']
                 ,btn: ['确定', '取消']
