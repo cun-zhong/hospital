@@ -184,7 +184,7 @@ public class HospitalService {
      * 修改医院信息
      */
     public Result updateHospital(Hospital hospital) {
-        try {
+     try {
             //取出更改后的医院名称
             String hospitalName = hospital.getHospitalName();
 
