@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>挂号详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" href="static/layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="layuiadmin-app-form-list" id="layuiadmin-app-form-list" style="padding: 20px 30px 0 0;">
+    <div class="layui-input-inline">
+        <input type="hidden" id="doctorId" name="id" th:value="${doctor.id}">
+    </div>
+    <div class="layui-form-item" >
+        <label class="layui-form-label" style="padding: 4px 15px 4px 0px;width: 60px;">医院：</label>
+        <div class="layui-input-block" style="margin-left: 75px">
+            <label id="hospitalName" class="layui-form-label" style="text-align: left;padding: 4px 0px;width: 200px;">-</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="padding: 4px 15px 4px 0px;width: 60px;">科室：</label>
+        <div class="layui-input-block" style="margin-left: 75px">
+            <label id="hisDepartmentName" class="layui-form-label" style="text-align: left;padding: 4px 0px;width: 200px;">-</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="padding: 4px 15px 4px 0px;width: 60px;">医生：</label>
+        <div class="layui-input-block" style="margin-left: 75px">
+            <label id="name" class="layui-form-label" style="text-align: left;padding: 4px 0px;width: 200px;">-</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="padding: 4px 15px 4px 0px;width: 60px;">职称：</label>
+        <div class="layui-input-block" style="margin-left: 75px">
+            <label id="title" class="layui-form-label" style="text-align: left;padding: 4px 0px;width: 200px;">-</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="padding: 4px 15px 4px 0px;width: 60px;">照片：</label>
+        <div class="layui-input-block" style="margin-left: 75px">
+            <img src="static/images/doctor.jpg" id="img" style="width: 85px;height: 110px">
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-left: 8px;margin-bottom: 30px;">
+        <div class="layui-card">
+            <div class="layui-card-header">介绍</div>
+            <div class="layui-card-body">
+                <span id="introduce"></span>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 0px;">
+        <label class="layui-form-label" style="padding: 4px 15px 4px 0px;width: 100px;"><h2>排班</h2></label>
+    </div>
+
+    <table class="layui-table" style="width: 100%" id="week">
+        <colgroup>
+            <col span="1" width="100">
+            <col span="1" width="100">
+            <col span="1" width="200">
+            <col span="1" width="50">
+        </colgroup>
+        <thead>
+        <tr style="background-color: #F2F2D3">
+            <th>科室</th>
+            <th>星期</th>
+            <th>时间段</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+
+</div>
+
+<script src="static/layuiadmin/layui/layui.js"></script>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/imageUpload.js"></script>
+
+<script>
+    layui.config({
+        base: 'static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.jquery
+            ,form = layui.form;
+
+        //获取医生信息
+        var doctorId=$("#doctorId").val();
+        if (doctorId){
+            $.ajax({
+                url:"booking/findDoctorDetail?id="+doctorId,
+                dateType:"json",
+                type:"get",
+                success:function(data){
+                    //获取返回的医生对象
+                    var doctor = data.data.doctor;
+                    var result=data.data.result;
+                    if (doctor.headUrl){
+                        $("#img").attr("src",doctor.headUrl);
+                    }
+                    $("#hospitalName").text(doctor.hospitalName);
+                    $("#hisDepartmentName").text(doctor.hisDepartmentName);
+                    $("#name").text(doctor.name);
+                    $("#title").text(doctor.title);
+                    $("#introduce").text(doctor.introduce);
+
+                    //加载班表信息
+                    var html = '';
+                    var index = 0;
+                    if(doctor.time){
+                        var time = doctor.time.substring(0,doctor.time.length-1);
+                        var timeArr = time.split(",");
+                        var now = new Date();
+                        var nowTime = now.getTime();
+                        var week = now.getDay();//0-周日，6-周六
+                        var arr = ["周日","周一","周二","周三","周四","周五","周六"];
+                        var thisWeek = [];
+                        var nextWeek = [];
+                        for (var i = 0; i < timeArr.length; i++) {
+                            if (timeArr[i]<=2*week){
+                                nextWeek.push(timeArr[i]);
+                            }else {
+                                thisWeek.push(timeArr[i]);
+                            }
+                        }
+                        var newTime = thisWeek.concat(nextWeek);//按照时间顺序排列一周内的新的时间
+                        for (var i = 0; i < newTime.length; i++) {
+                            var temp = newTime[i]%2==0?parseInt(newTime[i]):parseInt(newTime[i])+1;//不用parseInt会当成字符串拼接
+
+                            if (newTime[i]>2*week){
+                                var date = new Date(nowTime+(temp-2*week)*12*60*60*1000);
+                            }else{
+                                var date = new Date(nowTime+(temp-2*week+14)*12*60*60*1000);
+                            }
+                            var nian = date.getFullYear();
+                            var yue = date.getMonth()+1;
+                            var ri = date.getDate();
+                            var riqi = nian+"-"+(yue<10?"0"+yue:yue)+"-"+(ri<10?"0"+ri:ri);//这一天的日期
+                            var h = arr[date.getDay()]+" "+(newTime[i]%2==0?"下午":"上午")+"<br>"+riqi;
+
+                            if (newTime[i]%2==0){
+                                var title = ["14:00-15:00","15:00-16:00","16:00-17:00","17:00-18:00"];
+                                var value = ["5","6","7","8"];
+                            }else{
+                                var title = ["08:00-09:00","09:00-10:00","10:00-11:00","11:00-12:00"];
+                                var value = ["1","2","3","4"];
+                            }
+
+                            html +='<tr>'
+                                +'<td>'+doctor.hisDepartmentName+'</td>'
+                                +'<td>'+h+'</td>'
+                                +'<td name="range">';
+
+                            if(result[index][newTime[i]][0][1] == true){
+                                html += '<input type="radio" name="timeRange" value="'+value[0]+'" title="'+title[0]+'">'
+                            }else{
+                                html += '<input type="radio" name="timeRange" value="'+value[0]+'" title="'+title[0]+'" disabled>'
+                            }
+
+                            if(result[index][newTime[i]][1][2] == true){
+                                html += '<input type="radio" name="timeRange" value="'+value[1]+'" title="'+title[1]+'">'
+                            }else{
+                                html += '<input type="radio" name="timeRange" value="'+value[1]+'" title="'+title[1]+'" disabled>'
+                            }
+
+                            if(result[index][newTime[i]][2][3] == true){
+                                html += '<input type="radio" name="timeRange" value="'+value[2]+'" title="'+title[2]+'">'
+                            }else{
+                                html += '<input type="radio" name="timeRange" value="'+value[2]+'" title="'+title[2]+'" disabled>'
+                            }
+
+                            if(result[index][newTime[i]][3][4] == true){
+                                html += '<input type="radio" name="timeRange" value="'+value[3]+'" title="'+title[3]+'">'
+                            }else{
+                                html += '<input type="radio" name="timeRange" value="'+value[3]+'" title="'+title[3]+'" disabled>'
+                            }
+                            index++;
+
+                            html+='</td>'
+                                +'<td>'
+                                +'<a class="layui-btn layui-btn-normal layui-btn-xs" name="register"><i class="layui-icon layui-icon-survey"></i>预约</a>'
+                                +'<input type="hidden" name="date" value="'+ riqi +'">'
+                                +'</td>'
+                                +'</tr>';
+                        }
+                    }else{
+                        //暂无班表
+                        html += '<tr>'
+                            +'<td colspan="4" style="text-align: center">暂无班表信息</td>'
+                            +'</tr>';
+                    }
+                    $("#tbody").html(html);
+                    form.render();//刷新radio
+
+                    //预约按钮绑定提交事件
+                    $("a[name='register']").on('click', function () {
+                        var date = $(this).siblings("input[name='date']").val();
+                        var timeRange = $(this).parent().siblings("td[name='range']").children("input[name='timeRange']:checked").val();
+                        var doctorId = $("#doctorId").val();
+                        if (!timeRange) {
+                            layer.msg("请选择时间段");
+                            return false;
+                        }
+                        var requestdata={
+                            date:date,
+                            timeRange:timeRange,
+                            doctorId:doctorId
+                        };
+                        // console.log(requestdata);
+                        // console.log(JSON.stringify(requestdata));
+                        //ajax提交
+                        $.ajax({
+                            url: "booking/register",
+                            contentType:"application/json",//数据提交格式
+                            type: "post",
+                            dataType: "json",
+                            data:JSON.stringify(requestdata),
+                            success: function (msg) {
+                                if (msg.success){
+                                    //成功
+                                    parent.layer.msg(msg.msg, { icon: 1, time: 1500 });
+                                    parent.layui.table.reload('LAY-app-content-list'); //重载表格
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name)); //再执行关闭
+                                }else {
+                                    parent.layer.alert(msg.msg, { icon: 2,time:1500});
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+        }
+
+    })
+</script>
+</body>
+</html>

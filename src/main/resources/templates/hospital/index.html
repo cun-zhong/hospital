@@ -108,6 +108,17 @@
                         </a>
                     </li>
                     <li class="layui-nav-item">
+                        <a href="javascript:;" lay-tips="预约挂号" lay-direction="2">
+                            <i class="layui-icon layui-icon-component"></i>
+                            <cite>预约挂号</cite>
+                            <span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd>
+                                <a href="javascript:;" lay-href="booking/bookingPage">预约挂号</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
                         <a href="javascript:;" lay-tips="医院管理" lay-direction="2">
                             <i class="layui-icon layui-icon-component"></i>
                             <cite>医院管理</cite>
@@ -133,9 +144,9 @@
                             <cite>用户管理</cite>
                             <span class="layui-nav-more"></span></a>
                         <dl class="layui-nav-child">
-                            <dd><a lay-href="doctor/doctorManagePage" lay-tips="医生" >医生</a></dd>
-                            <dd><a href="javascript:;">患者</a></dd>
-                            <dd><a href="javascript:;">管理员</a></dd>
+                            <dd data-name="doctor"><a lay-href="doctor/doctorManagePage" >医生</a></dd>
+                            <dd data-name="user"><a lay-href="user/userManagePage">患者</a></dd>
+                            <dd data-name="admin"><a href="javascript:;" lay-href="admin/adminManagePage">管理员</a></dd>
                         </dl>
                     </li>
                     <li class="layui-nav-item">
@@ -162,8 +173,8 @@
                             <cite>系统设置</cite>
                             <span class="layui-nav-more"></span></a>
                         <dl class="layui-nav-child">
-                            <dd class="layui-nav-itemed">
-                                <a href="javascript:;" lay-tips="医院风采" lay-href="rotationPicture/rotationPictureManage">医院风采</span></a>
+                            <dd class="layui-nav-itemed" data-name="hospitalShow">
+                                <a href="javascript:;"  lay-href="rotationPicture/rotationPictureManage">医院风采</span></a>
                             </dd>
                             <dd class="layui-nav-itemed">
                                 <a href="javascript:;" lay-href="rotationPicture/rotationPictureManage">热门医院</a>

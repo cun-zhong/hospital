@@ -4,6 +4,7 @@ import com.sunny.hospital.dao.DepartmentDao;
 import com.sunny.hospital.dao.DoctorDao;
 import com.sunny.hospital.dao.HospitalDao;
 import com.sunny.hospital.entity.*;
+import com.sunny.hospital.utils.CoreDateUtils;
 import com.sunny.hospital.utils.Pager;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -137,7 +138,14 @@ public class DoctorService {
             if (StringUtils.isNotEmpty(name)) {
                 sb.append(" and name like '%" + name + "%'");
             }
-
+            //就诊日期
+            String todate = jsonObject.getString("date");
+            //就诊时间段
+            String am = jsonObject.getString("am");
+            if (StringUtils.isNotEmpty(todate) && StringUtils.isNotEmpty(am)){
+                int theTime = getTheTime(todate, am);
+                sb.append(" and find_in_set("+theTime+",time)");
+            }
             //分页条件 每页条数，当前页
             int pageNum, pageSize;
             if (jsonObject.get("pageNum") == null || jsonObject.get("pageSize") == null) {
@@ -170,5 +178,16 @@ public class DoctorService {
             LOGGER.error("医生筛选查询异常" + e);
             return new Result<>(-1, "医生筛选查询异常");
         }
+    }
+
+    /**
+     * 获取就诊时间所对应的数字 1-10
+     * */
+    public int getTheTime(String todate,String am){
+        //获取所选的日期是周几
+        int weekOfDateInt = CoreDateUtils.getWeekOfDateInt(todate);
+        int toam = Integer.parseInt(am);
+        //根据周几和上午、下午 计算出对应的数字
+        return toam==0?weekOfDateInt*2-1:weekOfDateInt*2;
     }
 }

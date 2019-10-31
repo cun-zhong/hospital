@@ -22,7 +22,7 @@ public class UserRowMapper implements RowMapper, Serializable {
         user.setName(resultSet.getString("name"));
         user.setPassword(resultSet.getString("password"));
         user.setIdCard(resultSet.getString("id_card"));
-        user.setMobile(resultSet.getString("mobile"));
+        user.setTel(resultSet.getString("tel"));
         user.setCreatedTime(resultSet.getDate("created_time"));
         user.setUpdatedTime(resultSet.getDate("updated_time"));
 

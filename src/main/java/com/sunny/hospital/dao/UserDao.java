@@ -21,5 +21,5 @@ public interface UserDao extends JpaRepository<User,Long> {
     void deleteById(Integer id);
 
     //根据用户名进行查询
-    User findByName(String name);
+    User findByUsername(String name);
 }

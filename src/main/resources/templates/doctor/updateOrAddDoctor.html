@@ -52,7 +52,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">职称</label>
         <div class="layui-input-inline">
-            <select name="level" th:field="${doctor.title}" th:value="${doctor.title}" lay-verify="required">
+            <select name="title" th:field="${doctor.title}" th:value="${doctor.title}" lay-verify="required">
                 <option value="">请选择</option>
                 <option th:selected="${doctor.getTitle()=='主治医师'}" value="主治医师">主治医师</option>
                 <option th:selected="${doctor.getTitle()=='主任医师'}" value="主任医师">主任医师</option>

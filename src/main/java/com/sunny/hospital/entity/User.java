@@ -28,6 +28,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    //用户名
+    private String username;
     //姓名
     private String name;
     //身份证号
@@ -35,7 +37,7 @@ public class User {
     //性别  1男2女
     private Integer gender;
     //手机号
-    private String mobile;
+    private String tel;
     //密码
     private String password;
     //积分

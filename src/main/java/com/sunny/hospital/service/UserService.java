@@ -34,20 +34,43 @@ public class UserService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * 根据用户名查用户
+     * */
+    public User findUserByName(String name){
+        User byUsername = userDao.findByUsername(name);
+        return byUsername;
+    }
+
+    /**
+     * 查询单个用户
+     * */
+    public User findUserById(Integer id){
+       return userDao.findById(id);
+    }
+
+    /**
+     * 查询全部用户
+     * */
+    public List<User> findAll(){
+        return userDao.findAll();
+    }
 
     /**
      * 添加普通用户
      */
     public Result addUser(User user) {
+        //给用户设置默认密码
+        user.setPassword("123");
         try {
             //取出要添加的用户名
-            String name = user.getName();
+            String name = user.getUsername();
             //取出要添加的密码
             String password = user.getPassword();
             //判断要添加的用户名不为空
             if (StringUtils.isNotEmpty(name)) {
                 //调用dao层方法查看是否数据库中已存在该用户名
-                User byName = userDao.findByName(name);
+                User byName = userDao.findByUsername(name);
                 //如果不存在
                 if (byName == null) {
                     //判断用户名是否不为空
@@ -80,9 +103,10 @@ public class UserService {
      * 修改普通用户信息
      */
     public Result updateUser(User user) {
+
         try {
             //取出修改后的用户名
-            String name = user.getName();
+            String name = user.getUsername();
             //取出要修改的普通用户id
             Integer id = user.getId();
             //判断修改后的用户名不为空
@@ -92,18 +116,16 @@ public class UserService {
                 //判断修改前后的用户名是否不一致
                 if (!byId.getName().equals(name)) {
                     //通过修改后的用户名调用dao层进行查询
-                    User byName = userDao.findByName(name);
+                    User byName = userDao.findByUsername(name);
                     //如果存在
                     if (byName != null) {
                         return new Result(-1, "普通用户名已存在,请重新输入");
                     }
                 }
-                //取出修改后的密码
-                String password = user.getPassword();
-                // 判断密码是否为空
-                if (StringUtils.isEmpty(password)) {
-                    return new Result(-1, "普通用户密码不能为空");
+                if (user.getPassword()==null){
+                    user.setPassword(byId.getPassword());
                 }
+                user.setIntegral(byId.getIntegral());
                 user.setUpdatedTime(new Date());
                 userDao.save(user);
                 //返回所有
@@ -142,7 +164,7 @@ public class UserService {
             StringBuilder sb = new StringBuilder(); //创建拼接对象
             String name = jsonObject.getString("name");
             String idCard = jsonObject.getString("idCard");
-            String mobile = jsonObject.getString("mobile");
+            String mobile = jsonObject.getString("tel");
             //拼接普通用户用户名  可模糊查询
             if (StringUtils.isNotEmpty(name)){
                 sb.append(" and name like '%" + name + "%'");
@@ -153,7 +175,7 @@ public class UserService {
             }
             //拼接普通用户手机号
             if (StringUtils.isNotEmpty(mobile)){
-                sb.append("and  mobile='" + mobile + "'");
+                sb.append("and  tel='" + mobile + "'");
             }
             //分页条件 每页条数，当前页
             int pageNum, pageSize;

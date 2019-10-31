@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @Author: 孙宇豪
  * @Date: 2019/7/26 16:56
- * @Description: TODO 基于内存数据库的身份认证和角色授权
+ * @Description: TODO 基于数据库的身份认证和角色授权
  * @Version 1.0
  */
 @Entity

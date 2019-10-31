@@ -285,6 +285,18 @@ public class CoreDateUtils {
         }
         return weekOfDays[w];
     }
+    public static int getWeekOfDateInt(String datetime) {
+        Date date = parseDate(datetime);
+        Calendar calendar = Calendar.getInstance();
+        if(date != null){
+            calendar.setTime(date);
+        }
+        int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0){
+            w = 0;
+        }
+        return w;
+    }
 
     //获取昨天日期
     public static String getYestoday()

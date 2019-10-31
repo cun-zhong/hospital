@@ -39,7 +39,7 @@ public class CustomUserDetailService implements UserDetailsService {
      * */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("CustomUserDetailService.loadUserByUsername()");
+        System.out.println("验证用户信息");
         //通过username获取用户信息
         UserInfo userInfo = userInfoService.findByUsername(username);
         if(userInfo == null) {

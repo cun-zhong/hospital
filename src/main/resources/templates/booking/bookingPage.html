@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>预约挂号</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <base th:href="${#request.getContextPath()}+'/'">
+    <link rel="stylesheet" href="static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="static/layuiadmin/style/admin.css" media="all">
+    <style type="text/css">
+        #week td{
+            text-align: center;
+        }
+        #week tbody tr:hover{
+            background-color: #fff;
+        }
+        #week tbody tr td:hover{
+            background-color: #f2f2f2;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">医院</label>
+                    <div class="layui-input-inline">
+                        <select name="hospitalName" id="hospitalName" lay-filter="hospitalName">
+                            <option value="">请选择医院</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">科室</label>
+                    <div class="layui-input-inline">
+                        <select name="hisDepartmentName" id="hisDepartmentName" lay-filter="hisDepartmentName">
+                            <option value="">请选择科室</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" id="date" name="date" value="">
+                <input type="hidden" id="am" name="am" value="">
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                    <button id="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </div>
+        <table class="layui-table" style="width: 80%" id="week">
+            <colgroup>
+                <col span="5" width="100">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td id="d1_1">-</td>
+                <td id="d2_1">-</td>
+                <td id="d3_1">-</td>
+                <td id="d4_1">-</td>
+                <td id="d5_1">-</td>
+            </tr>
+            <tr>
+                <td id="d1_2">-</td>
+                <td id="d2_2">-</td>
+                <td id="d3_2">-</td>
+                <td id="d4_2">-</td>
+                <td id="d5_2">-</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="layui-card-body">
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+            <script type="text/html" id="imgTpl">
+                <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.headUrl }}>
+            </script>
+            <script type="text/html" id="buttonTpl">
+                {{#  if(d.status){ }}
+                <button class="layui-btn layui-btn-xs">已发布</button>
+                {{#  } else { }}
+                <button class="layui-btn layui-btn-primary layui-btn-xs">待修改</button>
+                {{#  } }}
+            </script>
+            <script type="text/html" id="table-content-list">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="registerPage"><i class="layui-icon layui-icon-survey"></i>挂号</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'doctorlist', 'table','form', 'layer'], function(){
+        var table = layui.table
+            ,form = layui.form
+            ,$ = layui.$;
+
+        //监听工具条
+        table.on('tool(LAY-app-content-list)', function (obj) {
+            var data = obj.data
+                , layEvent = obj.event;
+            if (layEvent === "registerPage"){
+                register(data);
+            }
+        });
+
+        //挂号操作
+        function register(data) {
+            var content='booking/registerPage?id='+data.id;
+            openCloseLayer(content,'预约挂号','550px', '550px');
+        }
+
+        function openCloseLayer(url, title, width, height) {
+            var settings={
+                btn: ['关闭']
+            }
+            openExtendLayer(url, title, width, height, settings)
+        }
+        function openExtendLayer(url, title, width, height, settings) {
+            layer.open($.extend(settings, {
+                type: 2,
+                title: title,
+                maxmin: true,
+                area: [width, height],
+                content: url
+            }));
+        }
+
+        $(document).ready(function () {
+            getHospital();
+            initWeek();
+        })
+
+        //获取医院列表
+        function getHospital() {
+            $.ajax({
+                url: "hospital/findAll",
+                type: "get",
+                dataType: "json",
+                success: function (data) {
+                    var result=data.data;
+                    var html = "<option value=''>请选择医院</option>";
+                    if (result.length>0 && null!=result){
+                        for(var i=0;i<result.length;i++){
+                            html += "<option value='"+result[i].hospitalName+"'>"+result[i].hospitalName+"</option>";
+                        }
+                    }
+                    $("#hospitalName").html(html);
+                    form.render();  //重新渲染form
+                }
+            });
+        }
+
+        //初始化就诊时间选择
+        function initWeek(){
+            var now = new Date().getTime();
+            var day = 24*60*60*1000;
+            var j=1;
+            for (var i = 1; i < 8 ; i++) {
+                var date = new Date(now+i*day);//当前时间往后几天
+                var weekend = date.getDay();//0-周日，6-周六
+                if(weekend==0 || weekend==6){
+                    continue;
+                }else {
+                    var week = ["周日","周一","周二","周三","周四","周五","周六"][weekend];//这一天是周几
+                    var nian = date.getFullYear();
+                    var yue = date.getMonth()+1;
+                    var ri = date.getDate();
+                    var riqi = nian+"-"+(yue<10?"0"+yue:yue)+"-"+(ri<10?"0"+ri:ri);//这一天的日期
+                    $("#d"+j+"_1").html(week+"上午"+"<input type='hidden' name='ams' value='0'><br><span name='date'>"+riqi+"</span>");
+                    $("#d"+j+"_2").html(week+"下午"+"<input type='hidden' name='ams' value='1'><br><span name='date'>"+riqi+"</span>");
+                    j++;
+                }
+            }
+        }
+
+        //日期选择事件（）
+        $('#week tbody tr td').on('click', function () {
+            //改变背景颜色
+            $('#week tbody tr td').css("background-color","#fff");
+            $(this).css("background-color","#f2f2f2");
+            var date = $(this).children("span[name='date']").text();
+            var am = $(this).children("input[name='ams']").val();
+            //为就诊时间和时间段赋值
+            $("#date").val(date);
+            $("#am").val(am);
+        });
+
+        //重置按钮
+        $("#reset").on("click",function(){
+            $("#deptId").val('');
+            $('#week tbody tr td').css("background-color","#fff");//日期背景全部复原
+            $("#date").val('');//日期置空
+            $("#am").val('');//上下午置空
+            form.render();
+            //防止跳转
+            return false;
+        })
+
+        //多级选择框 医院-科室
+        form.on('select(hospitalName)', function(data){
+            $.ajax({
+                url:"department/findAllByHospitalName?hospitalName="+data.value,
+                // data:{tid:data.value},
+                type:"get",
+                success:function(datas){
+                    $("select[name=hisDepartmentName]").html('<option value="">请选择科室</option>'); //清空
+                    var result=datas.data;
+                    if(result!=null){
+                        $.each(result, function(key, val) {
+                            var option1 = $("<option>").val(val.hisDepartmentName).text(val.hisDepartmentName);
+                            $("select[name=hisDepartmentName]").append(option1);
+                            form.render('select');
+                        });
+                    }else{
+                        form.render('select');
+                    }
+                    $("select[name=hisDepartmentName]").get(0).selectedIndex=0;
+                }
+            });
+
+        });
+
+        //监听搜索!搞了一整天才搞懂监听器是通过name来取值的
+        form.on('submit(LAY-app-contlist-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('LAY-app-content-list', {
+                where: field
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

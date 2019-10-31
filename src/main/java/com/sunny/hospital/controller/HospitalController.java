@@ -118,6 +118,7 @@ public class HospitalController {
      * 查询所有医院
      * */
     @GetMapping("findAll")
+    @ResponseBody
     public Result findAll(){
         List<Hospital> all = hospitalService.findAll();
         return new Result(all);

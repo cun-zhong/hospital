@@ -1,6 +1,7 @@
 package com.sunny.hospital.controller;
 
 import com.sunny.hospital.entity.Department;
+import com.sunny.hospital.entity.Doctor;
 import com.sunny.hospital.entity.Result;
 import com.sunny.hospital.entity.User;
 import com.sunny.hospital.service.UserService;
@@ -9,7 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author: 孙宇豪
@@ -27,6 +32,27 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * @deprecated 添加或修改用户信息页面
+     * */
+    @GetMapping("updateOrAddUser")
+    public String updateOrAddUser(Integer id, ModelMap modelMap){
+        if (id!=null){
+            User userById = userService.findUserById(id);
+            modelMap.addAttribute("user",userById);
+        }else {
+            modelMap.addAttribute("user",new User());
+        }
+        return "user/updateOrAddUser";
+    }
+
+    /**
+     * 管理用户页面
+     * */
+    @GetMapping("userManagePage")
+    public String userManagePage(Model model){
+        return "user/userManage";
+    }
 
     /**
      * 添加普通用户信息

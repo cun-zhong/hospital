@@ -20,24 +20,22 @@ public class BookingOrderRowMapper implements RowMapper, Serializable {
         bookingOrder.setId(resultSet.getInt("id"));
         bookingOrder.setHospitalCode(resultSet.getString("hospital_code"));
         bookingOrder.setHospitalName(resultSet.getString("hospital_name"));
-        bookingOrder.setHisDepartmentId(resultSet.getString("his_department_id"));
+        bookingOrder.setHisDepartmentId(resultSet.getInt("his_department_id"));
         bookingOrder.setHisDepartmentName(resultSet.getString("his_department_name"));
-        bookingOrder.setHisDoctorId(resultSet.getString("his_doctor_id"));
-        bookingOrder.setHisDoctorName(resultSet.getString("his_doctor_name"));
-
-        bookingOrder.setHisDoctorTitle(resultSet.getString("his_doctor_title"));
-        bookingOrder.setSourceId(resultSet.getString("source_id"));
-        bookingOrder.setSourceNum(resultSet.getString("source_num"));
-        bookingOrder.setReservationTime(resultSet.getString("reservation_time"));
-        bookingOrder.setPcode(resultSet.getString("pcode"));
-
-        bookingOrder.setWorkId(resultSet.getString("work_id"));
+        bookingOrder.setDoctorId(resultSet.getInt("doctor_id"));
+        bookingOrder.setDoctorName(resultSet.getString("doctor_name"));
+        bookingOrder.setDoctorTitle(resultSet.getString("doctor_title"));
+        bookingOrder.setChooseDate(resultSet.getDate("choose_date"));
+        bookingOrder.setRegisterTime(resultSet.getDate("register_timer"));
+        bookingOrder.setAm(resultSet.getString("am"));
+        bookingOrder.setTimeRange(resultSet.getString("time_range"));
+        bookingOrder.setFinishTime(resultSet.getDate("finish_time"));
         bookingOrder.setUserId(resultSet.getInt("user_id"));
         bookingOrder.setStatus(resultSet.getInt("status"));
-
-        bookingOrder.setForDateDay(resultSet.getDate("for_date_day"));
         bookingOrder.setCreatedTime(resultSet.getDate("created_time"));
         bookingOrder.setUpdatedTime(resultSet.getDate("updated_time"));
+        bookingOrder.setSort(resultSet.getInt("sort"));
+        bookingOrder.setRangeSort(resultSet.getString("range_sort"));
 
         return bookingOrder;
 

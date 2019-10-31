@@ -1,6 +1,9 @@
 package com.sunny.hospital.service;
 
 import com.sunny.hospital.dao.BookingOrderDao;
+import com.sunny.hospital.dao.DoctorDao;
+import com.sunny.hospital.dao.HospitalDao;
+import com.sunny.hospital.dao.UserDao;
 import com.sunny.hospital.entity.*;
 import com.sunny.hospital.utils.Pager;
 import net.sf.json.JSONObject;
@@ -9,8 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,14 +40,108 @@ public class BookingOrderService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private DoctorDao doctorDao;
+
+    @Autowired
+    private HospitalDao hospitalDao;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 查询医生待就诊号
+     * */
+    public List<BookingOrder> findAllByDoctorIdAndStatus(Integer status, Integer doctorId){
+        return bookingOrderDao.findAllByDoctorIdAndStatus(doctorId, status);
+    }
 
     /**
      * 添加预约挂号订单信息
      */
     public Result addBookingOrder(BookingOrder bookingOrder) {
         try {
-            bookingOrderDao.save(bookingOrder);
+            //获取当前登录用户的信息
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            //获取登录用户名
+            String username = user.getUsername();
+            //根据用户名查询用户对象
+            com.sunny.hospital.entity.User userByName = userDao.findByUsername(username);
+            if (userByName.getIntegral()<0){
+                return new Result(-1,"信用分小于0，您已被禁止使用挂号功能");
+            }
+            Integer userid = userByName.getId();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date chooseDate = null;
+            try {
+                chooseDate = sdf.parse(bookingOrder.getDate());//转换前台选择的挂号时间
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (chooseDate != null && chooseDate.getTime() <= new Date().getTime()){
+                return new Result(-1,"选择的日期小于当前时间");
+            }
+            Integer doctorId = bookingOrder.getDoctorId();
+            String timeRange = bookingOrder.getTimeRange();
+            //医生在该时间段所以挂号信息
+            List<BookingOrder> allList = bookingOrderDao.findAllByDoctorIdAndChooseDateAndTimeRange(doctorId, chooseDate, timeRange);
+
+            //待就诊信息
+            List<BookingOrder> waitList = bookingOrderDao.findAllByDoctorIdAndChooseDateAndTimeRangeAndStatus(doctorId, chooseDate, timeRange, 0);
+            Doctor doctor = doctorDao.findById(doctorId);
+            int hourPeople=5;
+            if (doctor != null && doctor.getHourPeople() != null){
+                hourPeople = doctor.getHourPeople();//如果医生设置了每个小时就诊人数，则以设置为准
+            }
+            if (waitList.size() >= hourPeople){
+                return new Result(-1,"医生"+doctor.getName()+"该时间段已无号");
+            }
+
+            //判断午别
+            String am="1";
+            if (Integer.parseInt(timeRange) <= 4){
+                am="0";
+            }
+            //用户当前半天的挂号数
+            List<BookingOrder> selfList = bookingOrderDao.findByDoctorIdAndAmAndChooseDateAndUserIdAndStatus(doctorId, am, chooseDate, userid, 0);
+            if (selfList != null && selfList.size() > 0){
+                return new Result(-1,"您在当前半天内已存在挂号信息");
+            }
+
+            int sort=1;//号源序号
+            if (allList != null && allList.size() > 0){
+                //如果已有人挂号，那么去最后一个人的序号加1
+                sort = allList.get(allList.size()-1).getSort() + 1;
+            }
+
+            //新建挂号对象
+            BookingOrder order=new BookingOrder();
+            order.setUserId(userid);
+            order.setDoctorId(doctorId);
+            order.setDoctorName(doctor.getName());
+            order.setDoctorTitle(doctor.getTitle());
+            order.setHospitalName(doctor.getHospitalName());
+            order.setHisDepartmentName(doctor.getHisDepartmentName());
+            order.setRegisterTime(new Date());
+            order.setChooseDate(chooseDate);
+            order.setAm(am);
+            order.setTimeRange(timeRange);
+            order.setStatus(0);
+            order.setSort(sort);
+            order.setRangeSort(timeRange+"-"+sort);
+            bookingOrderDao.save(order);
+
+            //为用户增加信用分
+            userByName.setIntegral(userByName.getIntegral()+1);
+            userDao.save(userByName);
+
+            //为医院增加订单量
+            Hospital hospital = hospitalDao.findByHospitalName(doctor.getHospitalName());
+            hospital.setPayNum(hospital.getPayNum()+1);
+            hospitalDao.save(hospital);
+
             return new Result(0, "预约挂号成功", "");
         } catch (Exception e) {
             logger.error("【预约挂号异常】" + bookingOrder + e);

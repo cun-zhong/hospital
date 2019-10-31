@@ -12,11 +12,10 @@ layui.define(['table', 'form'], function(exports){
     var $ = layui.$
         ,table = layui.table
 
-
     //筛选
     table.render({
         elem: '#LAY-app-content-list'
-        ,url: 'doctor/queryDoctor' //模拟接口
+        ,url: 'user/queryUser' //模拟接口
         ,contentType:'application/json'
         ,method:'post'
         ,request :{
@@ -24,25 +23,20 @@ layui.define(['table', 'form'], function(exports){
             ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
         ,where:{
-            hospitalName:'',
-            hisDepartmentName:'',
             name:'',
-            date:'',
-            am:''
+            idCard:'',
+            tel:'',
         }
         ,cols: [[
             {type: 'numbers',  fixed: true}
-            // ,{field: 'id', width: 100, title: '医生编号', sort: true}
-            ,{field: 'name', title: '医生名字'}
-            ,{field: 'headUrl', title: '医生头像',width: 100, templet: '#imgTpl'}
-            ,{field: 'hospitalName', title: '医院名称'}
-            ,{field: 'hisDepartmentName', title: '科室名称', minWidth: 100}
-            ,{field: 'title', title: '医生职称'}
-            // ,{field: 'tel', title: '联系方式'}
+            ,{field: 'name', title: '名字'}
+            ,{field: 'idCard', title: '身份证'}
+            ,{field: 'tel', title: '联系方式'}
             ,{field: 'gender', title: '性别',templet: function(d){
                     var info = d.gender;
                     return info===1?'男':'女';
                 }}
+            ,{field: 'integral', title: '信用分'}
             ,{field: 'createdTime', title: '创建时间',sort: true}
             ,{title: '操作', minWidth: 150, align: 'center', fixed: 'right', toolbar: '#table-content-list'}
         ]]
@@ -59,7 +53,7 @@ layui.define(['table', 'form'], function(exports){
         if(obj.event === 'del'){
             layer.confirm('确定删除吗？', function (index) {
                 $.ajax({
-                    url: "doctor/deleteHospital?id=" + data.id,
+                    url: "user/deleteById?id=" + data.id,
                     type: "get",
                     dataType: "json",
                     success: function (data) {
@@ -76,8 +70,8 @@ layui.define(['table', 'form'], function(exports){
         } else if(obj.event === 'edit'){
             layer.open({
                 type: 2
-                ,title: '编辑医生'
-                ,content: 'doctor/updateOrAddDoctor?id='+ data.id
+                ,title: '编辑用户'
+                ,content: 'user/updateOrAddUser?id='+ data.id
                 ,maxmin: true
                 ,area: ['550px', '550px']
                 ,btn: ['确定', '取消']
@@ -91,5 +85,5 @@ layui.define(['table', 'form'], function(exports){
     });
 
 
-    exports('doctorlist', {})
+    exports('userlist', {})
 });
