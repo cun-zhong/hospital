@@ -60,6 +60,8 @@ public class BookingOrder {
     private Date finishTime;
     //用户标识
     private Integer userId;
+    //用户姓名
+    private String patientName;
     //状态
     private Integer status;
     //预约序号

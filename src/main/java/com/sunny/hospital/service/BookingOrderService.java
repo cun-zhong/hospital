@@ -131,6 +131,7 @@ public class BookingOrderService {
             order.setStatus(0);
             order.setSort(sort);
             order.setRangeSort(timeRange+"-"+sort);
+            order.setPatientName(userByName.getName());
             bookingOrderDao.save(order);
 
             //为用户增加信用分
@@ -173,9 +174,13 @@ public class BookingOrderService {
             StringBuilder sb = new StringBuilder(); //创建拼接对象
             String hospitalName = jsonObject.getString("hospitalName");
             String hisDepartmentName = jsonObject.getString("hisDepartmentName");
-            String hisDoctorName = jsonObject.getString("hisDoctorName");
-            String forDateDay = jsonObject.getString("forDateDay");
-
+            String hisDoctorName = jsonObject.getString("doctorName");
+            String forDateDay = jsonObject.getString("chooseDate");
+            //用户id
+            String userId = jsonObject.getString("userId");
+            if (StringUtils.isNotEmpty(userId)){
+                sb.append(" and user_id="+userId);
+            }
             //判断医院名称是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(hospitalName)) {
                 sb.append(" and hospital_name='" + hospitalName + "'");
@@ -186,11 +191,11 @@ public class BookingOrderService {
             }
             //判断医生姓名是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(hisDoctorName)) {
-                sb.append(" and his_doctor_name='" + hisDoctorName + "'");
+                sb.append(" and doctor_name='" + hisDoctorName + "'");
             }
             //判断预约日期是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(forDateDay)) {
-                sb.append(" and for_date_day='" + forDateDay + "'");
+                sb.append(" and choose_date='" + forDateDay + "'");
             }
 
             //分页条件 每页条数，当前页

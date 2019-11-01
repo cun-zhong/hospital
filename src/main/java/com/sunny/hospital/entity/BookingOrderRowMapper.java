@@ -26,7 +26,7 @@ public class BookingOrderRowMapper implements RowMapper, Serializable {
         bookingOrder.setDoctorName(resultSet.getString("doctor_name"));
         bookingOrder.setDoctorTitle(resultSet.getString("doctor_title"));
         bookingOrder.setChooseDate(resultSet.getDate("choose_date"));
-        bookingOrder.setRegisterTime(resultSet.getDate("register_timer"));
+        bookingOrder.setRegisterTime(resultSet.getDate("register_time"));
         bookingOrder.setAm(resultSet.getString("am"));
         bookingOrder.setTimeRange(resultSet.getString("time_range"));
         bookingOrder.setFinishTime(resultSet.getDate("finish_time"));
@@ -36,6 +36,7 @@ public class BookingOrderRowMapper implements RowMapper, Serializable {
         bookingOrder.setUpdatedTime(resultSet.getDate("updated_time"));
         bookingOrder.setSort(resultSet.getInt("sort"));
         bookingOrder.setRangeSort(resultSet.getString("range_sort"));
+        bookingOrder.setPatientName(resultSet.getString("patient_name"));
 
         return bookingOrder;
 

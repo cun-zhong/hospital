@@ -5,9 +5,13 @@ import com.sunny.hospital.entity.Doctor;
 import com.sunny.hospital.entity.Result;
 import com.sunny.hospital.service.BookingOrderService;
 import com.sunny.hospital.service.DoctorService;
+import com.sunny.hospital.service.UserService;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +34,34 @@ public class BookingOrderController {
     @Autowired
     private BookingOrderService bookingOrderService;
 
+    @Autowired
+    private UserService userService;
+
+    /**
+     * @deprecated 用户订单查询页面
+     * */
+    @GetMapping("bookingOrderPage")
+    public String bookingOrderPage(){
+        return "booking/bookingOrderPage";
+    }
+
+    /**
+     * @deprecated 筛选订单接口
+     * */
+    @PostMapping("queryBookingOrder")
+    @ResponseBody
+    public Result queryBookingOrder(@RequestBody JSONObject jsonObject){
+        //获取当前登录用户的信息
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //获取登录用户名
+        String username = user.getUsername();
+        com.sunny.hospital.entity.User userByName = userService.findUserByName(username);
+        jsonObject.put("userId",userByName.getId());
+        jsonObject.put("doctorName","");
+        Result result = bookingOrderService.queryBookingOrder(jsonObject);
+        return result;
+    }
+
     /**
      * @deprecated 挂号接口
      * */
@@ -47,7 +79,7 @@ public class BookingOrderController {
      * @deprecated 挂号页面
      * */
     @GetMapping("bookingPage")
-    public String bookingOrderPage(){
+    public String bookingPage(){
         return "booking/bookingPage";
     }
 
