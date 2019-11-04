@@ -69,32 +69,43 @@ public class BookingOrderService {
             String username = user.getUsername();
             //根据用户名查询用户对象
             com.sunny.hospital.entity.User userByName = userDao.findByUsername(username);
+            //判断当前用户积分是否小于0，如果小于0.则返回相关提示信息
             if (userByName.getIntegral()<0){
                 return new Result(-1,"信用分小于0，您已被禁止使用挂号功能");
             }
+            //获取用户id
             Integer userid = userByName.getId();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            //创建选择日期
             Date chooseDate = null;
             try {
-                chooseDate = sdf.parse(bookingOrder.getDate());//转换前台选择的挂号时间
+                //转换前台选择的挂号时间
+                chooseDate = sdf.parse(bookingOrder.getDate());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            //判断选择时间为空和选择日期小于当前时间的则返回相关提示信息
             if (chooseDate != null && chooseDate.getTime() <= new Date().getTime()){
                 return new Result(-1,"选择的日期小于当前时间");
             }
+            //获取预约挂号订单上医生的id
             Integer doctorId = bookingOrder.getDoctorId();
+            //获取预约挂号订单上预约的是时间段
             String timeRange = bookingOrder.getTimeRange();
             //医生在该时间段所以挂号信息
             List<BookingOrder> allList = bookingOrderDao.findAllByDoctorIdAndChooseDateAndTimeRange(doctorId, chooseDate, timeRange);
 
             //待就诊信息
             List<BookingOrder> waitList = bookingOrderDao.findAllByDoctorIdAndChooseDateAndTimeRangeAndStatus(doctorId, chooseDate, timeRange, 0);
+            //通过doctorId调用dao层 查询医生
             Doctor doctor = doctorDao.findById(doctorId);
+            //设置每小时医生号源个数默认为5
             int hourPeople=5;
             if (doctor != null && doctor.getHourPeople() != null){
-                hourPeople = doctor.getHourPeople();//如果医生设置了每个小时就诊人数，则以设置为准
+                //如果医生设置了每个小时就诊人数，则以设置为准
+                hourPeople = doctor.getHourPeople();
             }
+            //如果预约的号源数大于或者等于改医生的每小时最大号源数则返回相关提示信息
             if (waitList.size() >= hourPeople){
                 return new Result(-1,"医生"+doctor.getName()+"该时间段已无号");
             }
@@ -106,6 +117,7 @@ public class BookingOrderService {
             }
             //用户当前半天的挂号数
             List<BookingOrder> selfList = bookingOrderDao.findByDoctorIdAndAmAndChooseDateAndUserIdAndStatus(doctorId, am, chooseDate, userid, 0);
+            //如果挂号数不为空并且大于0 则返回相关提示信息
             if (selfList != null && selfList.size() > 0){
                 return new Result(-1,"您在当前半天内已存在挂号信息");
             }
@@ -118,29 +130,48 @@ public class BookingOrderService {
 
             //新建挂号对象
             BookingOrder order=new BookingOrder();
+            //设置挂号对象的相关信息
+            //设置userid
             order.setUserId(userid);
+            //设置医生id
             order.setDoctorId(doctorId);
+            //设置医生名称
             order.setDoctorName(doctor.getName());
+            //设置医生职称
             order.setDoctorTitle(doctor.getTitle());
+            //设置医院名称
             order.setHospitalName(doctor.getHospitalName());
+            //设置科室名称
             order.setHisDepartmentName(doctor.getHisDepartmentName());
+            //设置预约时间
             order.setRegisterTime(new Date());
+            //设置预约日期
             order.setChooseDate(chooseDate);
+            //设置上午/下午
             order.setAm(am);
+            //设置时间段
             order.setTimeRange(timeRange);
+            //设置状态
             order.setStatus(0);
+            //设置序号
             order.setSort(sort);
+            //设置时间段—序号
             order.setRangeSort(timeRange+"-"+sort);
+            //设置就诊人姓名
             order.setPatientName(userByName.getName());
+            //进行保存
             bookingOrderDao.save(order);
 
             //为用户增加信用分
             userByName.setIntegral(userByName.getIntegral()+1);
+            //进行保存
             userDao.save(userByName);
 
             //为医院增加订单量
             Hospital hospital = hospitalDao.findByHospitalName(doctor.getHospitalName());
+            //订单量+1
             hospital.setPayNum(hospital.getPayNum()+1);
+            //保存
             hospitalDao.save(hospital);
 
             return new Result(0, "预约挂号成功", "");
