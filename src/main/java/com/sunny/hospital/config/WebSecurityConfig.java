@@ -38,10 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailService customUserDetailService;
 
-    @Autowired
-    private CustomLogoutSuccessHandler logoutSuccessHandler;
-
-
     /**
      * （1）如何开启持久化token方式：可以使用and().rememberMe()进行开启记住我，然后指定tokenRepository（），
      * 即指定了token持久化方式。
@@ -81,13 +77,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()//设置白名单 设置所有人都可以访问登录页面
                 .antMatchers("/","login").permitAll()
                 .antMatchers("/genCaptcha").permitAll()//验证码
-                .antMatchers("/test/**","/test1/**").permitAll()
                 .antMatchers("/res/**/*.{js,html,css}").permitAll()
                 .antMatchers("/static/**/*").permitAll()
                 /*扩展access()的SpEL表达式 添加access配置*/
                 .anyRequest().access("@authService.canAccess(request,authentication)")
                 .anyRequest().authenticated()  // 任何请求,登录后可以访问
-                //设置记住我
+                //设置记住我 token持久化
                 .and().rememberMe().tokenRepository(tokenRepository()).tokenValiditySeconds(1209600) .userDetailsService(customUserDetailService)
 
                 .and().csrf().disable()

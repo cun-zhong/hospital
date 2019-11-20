@@ -26,7 +26,6 @@ public class DataInit {
     @Autowired
     private RoleRepository roleRepository;
 
-    //p.1 inject permission repository
     @Autowired
     private PermissionRepository permissionReporitory;
 
