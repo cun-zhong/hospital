@@ -75,7 +75,7 @@ public class UserController {
 
 
     /**
-     * 删除科室信息
+     * 删除
      */
     @GetMapping("deleteById")
     @ResponseBody

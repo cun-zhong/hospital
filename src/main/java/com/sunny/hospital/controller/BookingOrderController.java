@@ -235,4 +235,14 @@ public class BookingOrderController {
         data.put("result",returnList);
         return new Result(data);
     }
+
+    /**
+     * @deprecated  取消挂号接口
+     * */
+    @GetMapping("cancel")
+    @ResponseBody
+    public Result cancel(Integer id){
+        Result cancel = bookingOrderService.cancel(id);
+        return cancel;
+    }
 }

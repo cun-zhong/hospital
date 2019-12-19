@@ -49,7 +49,8 @@ public class BookingOrder {
     private Date chooseDate;
     //挂号的时间
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)    private Date registerTime;
+    @Column(updatable = false)
+    private Date registerTime;
     //预约时间段午别
     private String am;
     //时间段 1-8代表8点-12点或者2点-6点，每一个小时代表一个时间段

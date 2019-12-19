@@ -20,7 +20,7 @@ layui.define(['table', 'form'], function(exports){
         , contentType: 'application/json'
         , method: 'post'
         , request: {
-            pageName: 'pageNum' //页码的参数名称，默认：page
+            pageNum: 'pageNum' //页码的参数名称，默认：page
             , limitName: 'pageSize' //每页数据量的参数名，默认：limit
         }
         , where: {
@@ -30,12 +30,12 @@ layui.define(['table', 'form'], function(exports){
         }
         , cols: [[
             {type: 'numbers', fixed: true}
-            , {field: 'id', width: 100, title: '订单编号', sort: true}
+            // , {field: 'id', width: 100, title: '订单编号', sort: true}
             , {field: 'patientName', width: 100, title: '患者姓名', sort: true}
-            , {field: 'hospitalName', title: '医院名称', width: 100}
+            , {field: 'hospitalName', title: '医院名称', width: 180}
             , {field: 'hisDepartmentName', title: '科室名称', width: 100}
             , {field: 'doctorName', title: '医生名称', width: 100}
-            , {field: 'chooseDate', title: '预约日期', width: 100}
+            , {field: 'chooseDate', title: '预约日期', width: 120}
             , {
                 field: 'am', title: '午别', width: 100, templet: function (d) {
                     return d.am === '0' ? '上午' : '下午';
@@ -62,11 +62,12 @@ layui.define(['table', 'form'], function(exports){
                     }
                 }
             }
-            , {field: 'rangSort', title: '就诊号', width: 70}
-            , {field: 'createdTime', title: '创建时间', sort: true, width: 100}
-            , {field: 'status', title: '发布状态', templet: '#buttonTpl', minWidth: 80, align: 'center'}
-            , {title: '操作', minWidth: 150, align: 'center', fixed: 'right', toolbar: '#table-content-list'}
+            , {field: 'rangeSort', title: '就诊号', width: 100}
+            // , {field: 'createdTime', title: '创建时间', sort: true, width: 100}
+            , {field: 'status', title: '发布状态', templet: '#buttonTpl', Width: 80, align: 'center'}
+            , {title: '操作', Width: 100, align: 'center', fixed: 'right', toolbar: '#table-content-list'}
         ]]
+        ,page: true
         , limit: 10
         , limits: [10, 15, 20, 25, 30]
         , text: '对不起，加载出现异常！'

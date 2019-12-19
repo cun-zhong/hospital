@@ -44,7 +44,7 @@
                     <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
                         <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                     </button>
-                    <button id="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
 
             </div>
@@ -59,6 +59,7 @@
                     <button class="layui-btn layui-btn-danger layui-btn-xs">已退号</button>
                     {{#  } if(d.status == "3") { }}
                     <button class="layui-btn layui-btn-disabled layui-btn-xs">已过期</button>
+                    {{#  } }}
                 </script>
                 <script type="text/html" id="table-content-list">
                     {{#  if(d.status == "0"){ }}
@@ -67,6 +68,7 @@
                     {{#  }else{ }}
                     <a class="layui-btn layui-btn-radius layui-btn-disabled layui-btn-xs"><i
                             class="layui-icon layui-icon-return"></i>退号</a>
+                    {{#  } }}
 
                 </script>
             </div>
@@ -84,6 +86,11 @@
                 , form = layui.form
                 , laydate = layui.laydate
                 , $ = layui.$;
+
+            $("#reset").click(function () {
+                window.location.reload();
+                form.render();
+            })
 
             //初始化日期选择
             laydate.render({
@@ -140,7 +147,33 @@
 
             });
 
+            //监听工具条
+            table.on('tool(LAY-app-content-list)', function (obj) {
+                var data = obj.data
+                    , layEvent = obj.event;
+                if (layEvent == "cancel") {
+                    cancel(data);
+                }
+            });
 
+            function cancel(value) {
+                layer.confirm('确定取消该预约吗？', function (index) {
+                    $.ajax({
+                        url: "booking/cancel?id=" + value.id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.code === 0) {
+                                parent.layui.layer.msg("退号成功");
+                                table.reload('LAY-app-content-list');
+                            } else {
+                                layer.msg(data.msg);
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
 
 
             //监听搜索!搞了一整天才搞懂监听器是通过name来取值的

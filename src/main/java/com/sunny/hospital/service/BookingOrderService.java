@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ public class BookingOrderService {
 
     @Autowired
     private HospitalDao hospitalDao;
+
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -143,7 +145,7 @@ public class BookingOrderService {
             order.setHospitalName(doctor.getHospitalName());
             //设置科室名称
             order.setHisDepartmentName(doctor.getHisDepartmentName());
-            //设置预约时间
+            //设置预约成功的时间
             order.setRegisterTime(new Date());
             //设置预约日期
             order.setChooseDate(chooseDate);
@@ -159,6 +161,8 @@ public class BookingOrderService {
             order.setRangeSort(timeRange+"-"+sort);
             //设置就诊人姓名
             order.setPatientName(userByName.getName());
+            order.setCreatedTime(new Date());
+            order.setUpdatedTime(new Date());
             //进行保存
             bookingOrderDao.save(order);
 
@@ -264,5 +268,60 @@ public class BookingOrderService {
             return new Result<>(-1, "预约挂号订单筛选查询异常");
         }
     }
+
+    public Result cancel(Integer id){
+        try {
+            BookingOrder order = bookingOrderDao.findById(id);
+            //判断号源状态是不是待就诊状态
+            if (order.getStatus()!=0){
+                return new Result(-1,"该号源已处理");
+            }
+            //获取就诊日期
+            Date chooseDate = order.getChooseDate();
+            //就诊午别
+            String am = order.getAm();
+            //当前时间
+            Date now=new Date();
+            //计算规定退号时间
+            Calendar c=Calendar.getInstance();
+            c.setTime(chooseDate);
+            if ("0".equals(am)){
+                //上午截止12点
+                c.set(Calendar.HOUR_OF_DAY,12);
+            }else {
+                //下午截止18点
+                c.set(Calendar.HOUR_OF_DAY,18);
+            }
+            //判断是否超出规定退号时间
+            if (now.getTime() > c.getTimeInMillis()){
+                return new Result(-1,"已超出规定退号时间，无法退号");
+            }
+            //退号减分
+            addScore(-2);
+            //修改订单状态
+            order.setStatus(2);
+            updateBookingOrder(order);
+            return new Result(0,"取消挂号成功");
+        }catch (Exception e){
+            logger.error("取消挂号异常");
+        }
+        return new Result(-1,"取消挂号失败");
+    }
+
+    /***
+     * @deprecated 操作用户分数的方法
+     */
+    public void addScore(Integer score){
+        //获取当前登录用户的信息
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //获取登录用户名
+        String username = user.getUsername();
+        com.sunny.hospital.entity.User userInfo = userDao.findByUsername(username);
+        Integer integral = userInfo.getIntegral();
+        userInfo.setIntegral(integral+score);
+        userInfo.setUpdatedTime(new Date());
+        userDao.save(userInfo);
+    }
+
 
 }

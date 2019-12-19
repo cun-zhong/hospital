@@ -54,8 +54,11 @@ public class Result<T> {
 
     public Result(int code, String msg) {
         this.code = code;
+        if (code==-1){
+            this.success=false;
+        }
         this.msg = msg;
-        this.success=false;
+//        this.success=true;
     }
 
 
