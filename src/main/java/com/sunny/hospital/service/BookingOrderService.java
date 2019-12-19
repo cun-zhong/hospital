@@ -54,6 +54,69 @@ public class BookingOrderService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
+     * 判断号源是否过期
+     * */
+    public Boolean getOrderDateStatus(Date chooseDatetime,String am){
+        Long now = new Date().getTime();
+        Long chooseDate = chooseDatetime.getTime();
+        Long end = 0L;
+        if("0".equals(am)){
+            //上午8:00-12:00
+            end = chooseDate + 12*60*60*1000;
+        }else{
+            //下午14:00-18:00
+            end = chooseDate + 18*60*60*1000;
+        }
+        if (now > end) {
+            //当前时间超过了挂号就诊时间，需要将这些挂号状态改为3（过期）
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @deprecated 同步过期号源
+     * */
+    public Result refersh(String username){
+        try {
+
+            List<BookingOrder> bookingOrders;
+            //判断医生名称不为空
+            if (StringUtils.isNotEmpty(username)){
+                bookingOrders=bookingOrderDao.findAllByStatusAndDoctorId(0,Integer.valueOf(username));
+            }else {
+                //没有医生名字的话就查询所有待就诊订单
+                bookingOrders=bookingOrderDao.findAllByStatus(0);
+            }
+            if (bookingOrders==null||bookingOrders.size()==0){
+                return new Result(-1,"没有可以同步的号源了");
+            }
+            //遍历订单列表
+            for (BookingOrder bookingOrder:bookingOrders){
+                //挂号日期
+                Date chooseDate = bookingOrder.getChooseDate();
+                //挂号午别
+                String am = bookingOrder.getAm();
+                //判断号源是否过期
+                Boolean orderDateStatus = getOrderDateStatus(chooseDate, am);
+                if (orderDateStatus){
+                    //过期了
+                    bookingOrder.setStatus(3);
+                    bookingOrder.setUpdatedTime(new Date());
+                }
+                //弃号减分
+                addScore(-3,null,bookingOrder.getUserId());
+            }
+            //保存
+            bookingOrderDao.saveAll(bookingOrders);
+            return new Result(0,"同步成功");
+        }catch (Exception e){
+            logger.error("同步过期号源异常"+e);
+            return new Result(-1,"同步过期号源失败");
+        }
+    }
+
+    /**
      * 查询医生待就诊号
      * */
     public List<BookingOrder> findAllByDoctorIdAndStatus(Integer status, Integer doctorId){
@@ -297,7 +360,12 @@ public class BookingOrderService {
                 return new Result(-1,"已超出规定退号时间，无法退号");
             }
             //退号减分
-            addScore(-2);
+            //获取当前登录用户的信息
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            //获取登录用户名
+            String username = user.getUsername();
+
+            addScore(-2,username,0);
             //修改订单状态
             order.setStatus(2);
             updateBookingOrder(order);
@@ -311,12 +379,14 @@ public class BookingOrderService {
     /***
      * @deprecated 操作用户分数的方法
      */
-    public void addScore(Integer score){
-        //获取当前登录用户的信息
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //获取登录用户名
-        String username = user.getUsername();
-        com.sunny.hospital.entity.User userInfo = userDao.findByUsername(username);
+    public void addScore(Integer score,String username,Integer userid){
+        com.sunny.hospital.entity.User userInfo;
+        if (StringUtils.isNotEmpty(username) && userid==0){
+            userInfo = userDao.findByUsername(username);
+        }else {
+            userInfo=userDao.findById(userid);
+        }
+
         Integer integral = userInfo.getIntegral();
         userInfo.setIntegral(integral+score);
         userInfo.setUpdatedTime(new Date());

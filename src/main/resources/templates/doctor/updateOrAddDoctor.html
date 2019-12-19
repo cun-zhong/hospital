@@ -44,6 +44,18 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">医生用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="username" th:value="${doctor.username}" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="text" name="password" th:value="${doctor.password}" lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">联系方式</label>
         <div class="layui-input-inline">
             <input type="text" name="tel" th:value="${doctor.tel}" lay-verify="required" placeholder="请输入联系方式" autocomplete="off" class="layui-input">

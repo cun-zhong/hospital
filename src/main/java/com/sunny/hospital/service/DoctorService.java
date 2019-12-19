@@ -1,9 +1,14 @@
 package com.sunny.hospital.service;
 
+import com.sunny.hospital.config.MyPasswordEncoder;
 import com.sunny.hospital.dao.DepartmentDao;
 import com.sunny.hospital.dao.DoctorDao;
 import com.sunny.hospital.dao.HospitalDao;
 import com.sunny.hospital.entity.*;
+import com.sunny.hospital.permission.bean.Role;
+import com.sunny.hospital.permission.bean.UserInfo;
+import com.sunny.hospital.permission.repository.RoleRepository;
+import com.sunny.hospital.permission.repository.UserInfoRepository;
 import com.sunny.hospital.utils.CoreDateUtils;
 import com.sunny.hospital.utils.Pager;
 import net.sf.json.JSONObject;
@@ -14,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +47,15 @@ public class DoctorService {
     @Autowired
     private DoctorDao doctorDao;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+
+    @Autowired
+    private MyPasswordEncoder passwordEncoder;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
@@ -62,10 +77,23 @@ public class DoctorService {
             doctor.setUpdatedTime(new Date());
             //获取要传入的医生名称
             String name = doctor.getName();
+            //密码默认123
+            doctor.setPassword("123");
             //判断新添加的医生姓名不能为空
-            if (StringUtils.isNotEmpty(name)) {
+            if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(doctor.getUsername())) {
                 //保存前端传过来的数据
-                doctorDao.save(doctor);
+                Doctor save = doctorDao.save(doctor);
+                //添加认证用户
+                UserInfo userInfo=new UserInfo();
+                userInfo.setUid(save.getId());
+                userInfo.setUsername(name);
+                userInfo.setPassword(passwordEncoder.encode("123"));
+                //获取就诊人角色对象
+                Role byRid = roleRepository.findByRid(2);
+                List<Role> roles=new ArrayList<>();
+                roles.add(byRid);
+                userInfo.setRoles(roles);
+                userInfoRepository.save(userInfo);
                 return new Result(0, "成功添加此医生", "");
             } else {
                 return new Result(-1, "医生姓名不能为空");
@@ -82,16 +110,17 @@ public class DoctorService {
      */
     public Result updateDoctor(Doctor doctor) {
         try {
-
             //获取要传入的医生名称
             String name = doctor.getName();
             //判断新添加的医生姓名不能为空
             if (StringUtils.isNotEmpty(name)) {
-
                 //设置当前时间为更新时间
                 doctor.setUpdatedTime(new Date());
                 //保存前端传过来的数据
                 doctorDao.save(doctor);
+                UserInfo userInfo = userInfoRepository.findByUid(doctor.getId().longValue());
+                userInfo.setPassword(passwordEncoder.encode(doctor.getPassword()));
+                userInfoRepository.save(userInfo);
                 return new Result(0, "成功修改此医生", "");
             } else {
                 return new Result(-1, "医生姓名不能为空");

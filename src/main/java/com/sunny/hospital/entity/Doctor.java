@@ -34,6 +34,10 @@ public class Doctor {
     private String hospitalCode;
     //his的科室编号
     private String hisDepartmentId;
+    //医生登陆用户名
+    private String username;
+    //密码
+    private String password;
     //医生名字
     private String name;
     //his的科室名称

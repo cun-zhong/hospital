@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>用户订单</title>
+    <title>诊断</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport"
@@ -46,6 +46,11 @@
                     </button>
                     <button id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-event="refresh" data-type="refresh"><i
+                            class="layui-icon layui-icon-refresh"></i>同步
+                    </button>
+                </div>
 
             </div>
             <div class="layui-card-body">
@@ -63,11 +68,11 @@
                 </script>
                 <script type="text/html" id="table-content-list">
                     {{#  if(d.status == "0"){ }}
-                    <a class="layui-btn layui-btn-radius layui-btn-danger layui-btn-xs" lay-event="cancel"><i
-                            class="layui-icon layui-icon-return"></i>退号</a>
+                    <a class="layui-btn layui-btn-xs" lay-event="treat"><i
+                            class="layui-icon layui-icon-chart"></i>就诊</a>
                     {{#  }else{ }}
-                    <a class="layui-btn layui-btn-radius layui-btn-disabled layui-btn-xs"><i
-                            class="layui-icon layui-icon-return"></i>退号</a>
+                    <a class="layui-btn layui-btn-disabled layui-btn-xs"><i
+                            class="layui-icon layui-icon-chart"></i>就诊</a>
                     {{#  } }}
 
                 </script>
@@ -87,6 +92,46 @@
                 , laydate = layui.laydate
                 , $ = layui.$;
 
+            function showLoad(){
+                return layer.msg('同步中...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false, time:100000}) ;
+            }
+            function closeLoad(){
+                layer.close(layer.index);
+            }
+
+            var active = {
+                refresh: refresh
+            };
+
+            $('.layui-btn.layuiadmin-btn-list').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+            function refresh(){
+                layer.confirm('点击同步可以将所有过期的挂号状态同步为过期，确认同步？', function (index) {
+                    $.ajax({
+                        url: "booking/refresh",
+                        type: "get",
+                        dataType: "json",
+                        beforeSend: function(){
+                            showLoad();
+                        },
+                        success: function (data) {
+                            closeLoad();
+                            if (data.code === 0) {
+                                parent.layui.layer.msg("同步成功");
+                                table.reload('LAY-app-content-list');
+                            } else {
+                                layer.msg(d.msg);
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+            //重置方法
             $("#reset").click(function () {
                 window.location.reload();
                 form.render();

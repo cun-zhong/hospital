@@ -1,7 +1,12 @@
 package com.sunny.hospital.service;
 
+import com.sunny.hospital.config.MyPasswordEncoder;
 import com.sunny.hospital.dao.UserDao;
 import com.sunny.hospital.entity.*;
+import com.sunny.hospital.permission.bean.Role;
+import com.sunny.hospital.permission.bean.UserInfo;
+import com.sunny.hospital.permission.repository.RoleRepository;
+import com.sunny.hospital.permission.repository.UserInfoRepository;
 import com.sunny.hospital.utils.Pager;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +37,15 @@ public class UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+
+    @Autowired
+    private MyPasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,7 +95,18 @@ public class UserService {
                         //保存更新时间
                         user.setUpdatedTime(new Date());
                         //保存前端传的所有数据
-                        userDao.save(user);
+                        User save = userDao.save(user);
+                        //添加认证用户
+                        UserInfo userInfo=new UserInfo();
+                        userInfo.setUid(save.getId());
+                        userInfo.setUsername(name);
+                        userInfo.setPassword(passwordEncoder.encode(password));
+                        //获取就诊人角色对象
+                        Role byRid = roleRepository.findByRid(3);
+                        List<Role> roles=new ArrayList<>();
+                        roles.add(byRid);
+                        userInfo.setRoles(roles);
+                        userInfoRepository.save(userInfo);
                         //返回保存的数据
                         return new Result(0, "成功添加此普通用户", "");
                     } else {
@@ -122,9 +148,10 @@ public class UserService {
                         return new Result(-1, "普通用户名已存在,请重新输入");
                     }
                 }
-                if (user.getPassword()==null){
-                    user.setPassword(byId.getPassword());
-                }
+                user.setPassword(byId.getPassword());
+                UserInfo userInfo = userInfoRepository.findByUid(id.longValue());
+                userInfo.setPassword(passwordEncoder.encode(byId.getPassword()));
+                userInfoRepository.save(userInfo);
                 user.setIntegral(byId.getIntegral());
                 user.setUpdatedTime(new Date());
                 userDao.save(user);

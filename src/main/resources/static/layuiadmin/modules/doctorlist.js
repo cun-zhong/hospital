@@ -34,6 +34,7 @@ layui.define(['table', 'form'], function(exports){
             {type: 'numbers',  fixed: true}
             // ,{field: 'id', width: 100, title: '医生编号', sort: true}
             ,{field: 'name', title: '医生名字'}
+            ,{field: 'username', title: '医生用户名'}
             ,{field: 'headUrl', title: '医生头像',width: 100, templet: '#imgTpl'}
             ,{field: 'hospitalName', title: '医院名称'}
             ,{field: 'hisDepartmentName', title: '科室名称', minWidth: 100}

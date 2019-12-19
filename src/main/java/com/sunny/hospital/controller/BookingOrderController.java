@@ -3,8 +3,11 @@ package com.sunny.hospital.controller;
 import com.sunny.hospital.entity.BookingOrder;
 import com.sunny.hospital.entity.Doctor;
 import com.sunny.hospital.entity.Result;
+import com.sunny.hospital.permission.bean.Role;
+import com.sunny.hospital.permission.bean.UserInfo;
 import com.sunny.hospital.service.BookingOrderService;
 import com.sunny.hospital.service.DoctorService;
+import com.sunny.hospital.service.UserInfoService;
 import com.sunny.hospital.service.UserService;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +38,31 @@ public class BookingOrderController {
     private BookingOrderService bookingOrderService;
 
     @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
     private UserService userService;
+
+    /**
+     * @deprecated 同步过期号源
+     * */
+    public Result refersh(){
+        //获取当前登录用户的信息
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //获取登录用户名
+        String username = user.getUsername();
+        UserInfo userInfo = userInfoService.findByUsername(username);
+        Role role=userInfo.getRoles().get(0);
+        //判断权限
+        String name = role.getName();
+        Result result;
+        if (name.equals("admin")){
+            result=bookingOrderService.refersh("");
+        }else {
+            result=bookingOrderService.refersh(String.valueOf(userInfo.getUid()));
+        }
+        return result;
+    }
 
     /**
      * @deprecated 用户订单查询页面
@@ -242,6 +269,18 @@ public class BookingOrderController {
     @GetMapping("cancel")
     @ResponseBody
     public Result cancel(Integer id){
+        Result cancel = bookingOrderService.cancel(id);
+        return cancel;
+    }
+
+    /**
+     * @deprecated  同步接口
+     * */
+    @GetMapping("refresh")
+    @ResponseBody
+    public Result refresh(Integer id){
+        //判断当前用户是不是管理员 是的话同步所有号源
+
         Result cancel = bookingOrderService.cancel(id);
         return cancel;
     }
