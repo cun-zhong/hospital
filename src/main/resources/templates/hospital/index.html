@@ -80,7 +80,6 @@
                         <span class="layui-nav-more"></span>
                     </a>
                     <dl class="layui-nav-child layui-anim layui-anim-upbit">
-                        <dd><a lay-href="">基本资料</a></dd>
                         <dd><a lay-href="">修改密码</a></dd>
                         <hr>
                         <dd style="text-align: center;"><a href="logout">退出</a></dd>
@@ -107,7 +106,7 @@
                             <cite>主页</cite>
                         </a>
                     </li>
-                    <li class="layui-nav-item">
+                    <li class="layui-nav-item" th:if="${role eq 'admin' || role eq 'user'}">
                         <a href="javascript:;" lay-tips="预约挂号" lay-direction="2">
                             <i class="layui-icon layui-icon-component"></i>
                             <cite>预约挂号</cite>
@@ -118,7 +117,7 @@
                             </dd>
                         </dl>
                     </li>
-                    <li class="layui-nav-item">
+                    <li class="layui-nav-item" th:if="${role eq 'admin' }">
                         <a href="javascript:;" lay-tips="医院管理" lay-direction="2">
                             <i class="layui-icon layui-icon-component"></i>
                             <cite>医院管理</cite>
@@ -129,7 +128,7 @@
                             </dd>
                         </dl>
                     </li>
-                    <li class="layui-nav-item">
+                    <li class="layui-nav-item" th:if="${role eq 'admin' }">
                         <a href="javascript:;" lay-tips="科室管理" lay-direction="2">
                             <i class="layui-icon layui-icon-template"></i>
                             <cite>科室管理</cite>
@@ -138,7 +137,7 @@
                             <dd><a lay-href="department/departmentManagePage">科室管理</a></dd>
                         </dl>
                     </li>
-                    <li class="layui-nav-item">
+                    <li class="layui-nav-item" th:if="${role eq 'admin' }">
                         <a href="javascript:;" lay-tips="用户管理" lay-direction="2">
                             <i class="layui-icon layui-icon-app"></i>
                             <cite>用户管理</cite>
@@ -146,28 +145,31 @@
                         <dl class="layui-nav-child">
                             <dd data-name="doctor"><a lay-href="doctor/doctorManagePage" >医生</a></dd>
                             <dd data-name="user"><a lay-href="user/userManagePage">患者</a></dd>
-                            <dd data-name="admin"><a href="javascript:;" lay-href="admin/adminManagePage">管理员</a></dd>
                         </dl>
                     </li>
-                    <li class="layui-nav-item">
-                        <a href="javascript:;" lay-tips="角色管理" lay-direction="2">
-                            <i class="layui-icon layui-icon-senior"></i>
-                            <cite>角色管理</cite>
-                            <span class="layui-nav-more"></span></a>
-                        <dl class="layui-nav-child"><dd><a>角色管理</a></dd></dl>
-                    </li>
-                    <li class="layui-nav-item">
-                        <a href="javascript:;" lay-tips="订单管理" lay-direction="2">
+                    <li class="layui-nav-item" th:if="${role eq 'admin' || role eq 'user'}">
+                        <a href="javascript:;" lay-tips="我的预约" lay-direction="2">
                             <i class="layui-icon layui-icon-user"></i>
-                            <cite>订单管理</cite>
+                            <cite>我的预约</cite>
                             <span class="layui-nav-more"></span></a>
                         <dl class="layui-nav-child">
                             <dd>
-                                <a lay-href="booking/bookingOrderPage">订单管理</a>
+                                <a lay-href="booking/bookingOrderPage">我的预约</a>
                             </dd>
                         </dl>
                     </li>
-                    <li data-name="set" class="layui-nav-item">
+                    <li class="layui-nav-item" th:if="${role eq 'doctor' || role eq 'admin'}">
+                        <a href="javascript:;" lay-tips="门诊诊断" lay-direction="2">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <cite>门诊诊断</cite>
+                            <span class="layui-nav-more"></span></a>
+                        <dl class="layui-nav-child">
+                            <dd>
+                                <a lay-href="booking/doctorOrderPage">门诊诊断</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li data-name="set" class="layui-nav-item" th:if="${role eq 'admin' }">
                         <a href="javascript:;" lay-tips="系统设置" lay-direction="2">
                             <i class="layui-icon layui-icon-set"></i>
                             <cite>系统设置</cite>

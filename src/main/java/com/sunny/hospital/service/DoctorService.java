@@ -66,6 +66,10 @@ public class DoctorService {
         return doctorDao.findById(id);
     }
 
+    public Doctor findByUsername(String username){
+        return doctorDao.findByUsername(username);
+    }
+
     /**
      * 添加医生信息
      */

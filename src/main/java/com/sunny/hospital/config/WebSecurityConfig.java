@@ -3,10 +3,12 @@ package com.sunny.hospital.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -63,6 +65,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new MyPasswordEncoder();
     }
 
+    //自定义用户验证
+    @Bean
+    public UserDetailsService userDetailsService() {
+        //获取用户账号密码及权限信息
+        return new CustomUserDetailService();
+    }
+
+    /**
+     * 配置认证方式等
+     * */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // 加入自定义的安全认证
+        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+    }
+
     /*
      *  有3种方式可以实现动态权限控制
      * （1）扩展access()的SpEL表达式
@@ -80,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/res/**/*.{js,html,css}").permitAll()
                 .antMatchers("/static/**/*").permitAll()
                 /*扩展access()的SpEL表达式 添加access配置*/
-                .anyRequest().access("@authService.canAccess(request,authentication)")
+//                .anyRequest().access("@authService.canAccess(request,authentication)")
                 .anyRequest().authenticated()  // 任何请求,登录后可以访问
                 //设置记住我 token持久化
                 .and().rememberMe().tokenRepository(tokenRepository()).tokenValiditySeconds(1209600) .userDetailsService(customUserDetailService)

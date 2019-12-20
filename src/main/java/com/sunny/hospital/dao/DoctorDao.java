@@ -21,4 +21,6 @@ public interface DoctorDao extends JpaRepository<Doctor,Long> {
     //根据医生姓名进行查询
     Doctor findByName(String name);
 
+    Doctor findByUsername(String username);
+
 }

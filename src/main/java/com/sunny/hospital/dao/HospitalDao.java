@@ -2,6 +2,7 @@ package com.sunny.hospital.dao;
 
 import com.sunny.hospital.entity.Hospital;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -28,6 +29,10 @@ public interface HospitalDao extends JpaRepository<Hospital,Long> {
 
     //查询所以医院
     List<Hospital> findAll();
+
+    //查询排名前三的热门医院
+    @Query(value = "select * from hospital  order by pay_num desc limit 3",nativeQuery=true)
+    List<Hospital> findHot();
 
 
 }

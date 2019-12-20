@@ -1,20 +1,27 @@
 package com.sunny.hospital.controller;
 
+import com.sunny.hospital.entity.Doctor;
 import com.sunny.hospital.entity.Hospital;
 import com.sunny.hospital.entity.Result;
 import com.sunny.hospital.entity.RotationPicture;
+import com.sunny.hospital.permission.bean.UserInfo;
+import com.sunny.hospital.service.DoctorService;
 import com.sunny.hospital.service.HospitalService;
 import com.sunny.hospital.service.RotationPictureService;
+import com.sunny.hospital.service.UserInfoService;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +43,12 @@ public class HospitalController {
     @Autowired
     private RotationPictureService rotationPictureService;
 
+    @Autowired
+    private DoctorService doctorService;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
     /**
      * @deprecated 首页
      */
@@ -50,7 +63,9 @@ public class HospitalController {
     @GetMapping("hospitalShow")
     public String HospitalShow(Model model) {
         List<RotationPicture> allRotationPicture = rotationPictureService.findAllRotationPicture();
+        List<Hospital> hot = hospitalService.findHot();
         model.addAttribute("images",allRotationPicture);
+        model.addAttribute("hots",hot);
         return "hospital/hospitalShow";
     }
 
@@ -120,7 +135,23 @@ public class HospitalController {
     @GetMapping("findAll")
     @ResponseBody
     public Result findAll(){
-        List<Hospital> all = hospitalService.findAll();
+        //获取当前登录用户的信息
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //获取登录用户名
+        String username = user.getUsername();
+        //查询用户的权限
+
+        UserInfo userInfo = userInfoService.findByUsername(username);
+        String role = userInfo.getRoles().get(0).getName();
+        List<Hospital> all=new ArrayList<>();
+        if (role.equals("admin")){
+            all = hospitalService.findAll();
+        }else {
+            Doctor doctor = doctorService.findByUsername(username);
+            Hospital hospital=new Hospital();
+            hospital.setHospitalName(doctor.getHospitalName());
+            all.add(hospital);
+        }
         return new Result(all);
     }
 }

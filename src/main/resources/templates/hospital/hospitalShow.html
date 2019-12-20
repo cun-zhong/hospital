@@ -11,9 +11,13 @@
     <link rel="stylesheet" href="static/layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="static/layuiadmin/style/admin.css" media="all">
     <style type="text/css">
-        #test-carousel-img img, .img-list img {
+        #test-carousel-img img {
             width: 100%;
             height: 100%;
+        }
+        .img-list img{
+            width:200px;
+            height: 150px;
         }
     </style>
 </head>
@@ -59,38 +63,14 @@
                                 <div class="img-list">
                                     <div class="layui-fluid" style="padding:0">
                                         <div class="layui-row layui-col-space30 space">
-                                            <div class="layui-col-xs12 layui-col-sm4 layui-col-md4">
-                                                <div class="item">
-                                                    <img src="http://img.114yygh.com/naja/hospital/1.jpg"
+                                            <div class="layui-col-xs12 layui-col-sm4 layui-col-md4" th:each="hot,hotStat:${hots}">
+                                                <div class="item" >
+                                                    <img th:src="${hot.getHospitalHeadImage()}"
                                                          layer-index="1">
                                                     <div class="cont-text">
-                                                        <div class="data">北京协和医院</div>
+                                                        <div class="data" th:text="${hot.getHospitalName()}"></div>
                                                         <p class="address"><i
-                                                                class="layui-icon layui-icon-location"></i><span>北京市东城区帅府园一号</span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="layui-col-xs12 layui-col-sm4 layui-col-md4">
-                                                <div class="item">
-                                                    <img src="http://img.114yygh.com/naja/hospital/12.jpg"
-                                                         layer-index="3">
-                                                    <div class="cont-text">
-                                                        <div class="data">北京大学第一医院</div>
-                                                        <p class="address"><i
-                                                                class="layui-icon layui-icon-location"></i><span>北京西城区西什库大街八号</span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="layui-col-xs12 layui-col-sm4 layui-col-md4">
-                                                <div class="item">
-                                                    <img src="http://img.114yygh.com/naja/hospital/162.jpg"
-                                                         layer-index="2">
-                                                    <div class="cont-text">
-                                                        <div class="data">中国人民解放军总医院</div>
-                                                        <p class="address"><i
-                                                                class="layui-icon layui-icon-location"></i><span>北京市海淀区复兴路28号</span>
+                                                                class="layui-icon layui-icon-location"></i><span th:text="${hot.getAddress()}"></span>
                                                         </p>
                                                     </div>
                                                 </div>
@@ -166,22 +146,6 @@
 
                         </div>
                     </div>
-                    <div class="layui-card">
-                        <div class="layui-tab layui-tab-brief layadmin-latestData">
-                            <ul class="layui-tab-title">
-                                <li class="layui-this">今日热搜</li>
-                                <li>今日热帖</li>
-                            </ul>
-                            <div class="layui-tab-content">
-                                <div class="layui-tab-item layui-show">
-                                    <table id="LAY-index-topSearch"></table>
-                                </div>
-                                <div class="layui-tab-item">
-                                    <table id="LAY-index-topCard"></table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -205,7 +169,7 @@
             , width: '100%'
             // , height: (W/b).toString()+"px"
             , height: "440px"
-            , interval: 1800
+            , interval: 8000
         });
 
 

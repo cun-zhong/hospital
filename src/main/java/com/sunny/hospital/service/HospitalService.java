@@ -40,6 +40,13 @@ public class HospitalService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
+     * 查询热门医院
+     * */
+    public List<Hospital> findHot(){
+        return hospitalDao.findHot();
+    }
+
+    /**
      * 查询所有医院
      * */
     public List<Hospital> findAll(){

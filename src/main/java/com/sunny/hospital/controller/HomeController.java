@@ -1,9 +1,12 @@
 package com.sunny.hospital.controller;
 
+import com.sunny.hospital.permission.bean.UserInfo;
+import com.sunny.hospital.service.UserInfoService;
 import com.sunny.hospital.utils.Constants;
 import com.sunny.hospital.utils.VerifyCodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -28,6 +32,9 @@ public class HomeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
+    @Autowired
+    private UserInfoService userInfoService;
+
     @GetMapping("login")
     public String loginAction() {
         //接收请求云跳转到登陆页面
@@ -35,14 +42,18 @@ public class HomeController {
     }
 
     @GetMapping ({"","/","/index"})
-    public String index(Model model) {
+    public String index(Model model,HttpServletRequest request) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         //返回账号信息
         if("anonymousUser".equals(principal)) {
             return "/login";
         }else {
             User user = (User)principal;
+            UserInfo byUsername = userInfoService.findByUsername(user.getUsername());
             model.addAttribute("name",user.getUsername());
+            HttpSession session=request.getSession();//获取session并将userName存入session对象
+            session.setAttribute("user", byUsername);
+            model.addAttribute("role",byUsername.getRoles().get(0).getName());
         }
         return "hospital/index";
     }

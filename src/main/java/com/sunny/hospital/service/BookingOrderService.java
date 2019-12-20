@@ -5,6 +5,7 @@ import com.sunny.hospital.dao.DoctorDao;
 import com.sunny.hospital.dao.HospitalDao;
 import com.sunny.hospital.dao.UserDao;
 import com.sunny.hospital.entity.*;
+import com.sunny.hospital.permission.repository.UserInfoRepository;
 import com.sunny.hospital.utils.Pager;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -50,8 +51,76 @@ public class BookingOrderService {
     @Autowired
     private HospitalDao hospitalDao;
 
+    @Autowired
+    private UserInfoRepository userInfoRepository;
+
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * @deprecated 就诊
+     * @param id 订单id
+     * @param userId 医生id
+     * */
+    public Result treat(Integer id,Integer userId){
+        try {
+            //根据id查询就诊订单
+            BookingOrder byId = this.bookingOrderDao.findById(id);
+            //如果不是待就诊状态
+            if (byId.getStatus()!=0){
+                return new Result(-1,"当前订单不是待就诊状态");
+            }
+            int orderTreatStatus = getOrderTreatStatus(byId.getChooseDate(), byId.getAm());
+            if (orderTreatStatus==0){
+                //返回状态为0 则就诊时间没问题
+                //设置状态为已就诊
+                byId.setStatus(1);
+                //设置就诊时间
+                byId.setFinishTime(new Date());
+                byId.setUpdatedTime(new Date());
+                bookingOrderDao.save(byId);
+                //就诊成功加分
+                addScore(3,"",byId.getUserId());
+            }else if (orderTreatStatus==1){
+                return new Result(-1,"未到就诊时间");
+            }else {
+                return new Result(-1,"超出规定就诊时间");
+            }
+            return new Result(0,"就诊成功");
+
+        }catch (Exception e){
+            logger.error("就诊失败"+e);
+        }
+        return new Result(-1,"就诊失败");
+    }
+
+    /**
+     * 判断号源是否到达就诊时间
+     * */
+    public int getOrderTreatStatus(Date chooseDatetime,String am){
+        Long now = new Date().getTime();
+        Long chooseDate = chooseDatetime.getTime();
+        Long start = 0L;
+        Long end = 0L;
+        if("0".equals(am)){
+            //上午8:00-12:00
+            start = chooseDate + 8*60*60*1000;
+            end = chooseDate + 12*60*60*1000;
+        }else{
+            //下午14:00-18:00
+            start = chooseDate + 14*60*60*1000;
+            end = chooseDate + 18*60*60*1000;
+        }
+        if (now < start){
+            //还未到就诊时间
+            return  1;
+        }
+        if (now > end){
+            //超出规定的就诊时间
+            return 2;
+        }
+        return 0;
+    }
 
     /**
      * 判断号源是否过期
@@ -272,7 +341,7 @@ public class BookingOrderService {
             StringBuilder sb = new StringBuilder(); //创建拼接对象
             String hospitalName = jsonObject.getString("hospitalName");
             String hisDepartmentName = jsonObject.getString("hisDepartmentName");
-            String hisDoctorName = jsonObject.getString("doctorName");
+            String hisDoctorName = jsonObject.getString("doctorId");
             String forDateDay = jsonObject.getString("chooseDate");
             //用户id
             String userId = jsonObject.getString("userId");
@@ -289,7 +358,7 @@ public class BookingOrderService {
             }
             //判断医生姓名是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(hisDoctorName)) {
-                sb.append(" and doctor_name='" + hisDoctorName + "'");
+                sb.append(" and doctor_id='" + hisDoctorName + "'");
             }
             //判断预约日期是否为空 拼接查询条件
             if (StringUtils.isNotEmpty(forDateDay)) {
@@ -371,7 +440,7 @@ public class BookingOrderService {
             updateBookingOrder(order);
             return new Result(0,"取消挂号成功");
         }catch (Exception e){
-            logger.error("取消挂号异常");
+            logger.error("取消挂号异常"+e);
         }
         return new Result(-1,"取消挂号失败");
     }

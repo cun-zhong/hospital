@@ -3,6 +3,7 @@ package com.sunny.hospital.config;
 
 import com.sunny.hospital.utils.MD5Util;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @Description: TODO 自定义加密算法
  * @Version 1.0
  */
-@Service
+@Component
 public class MyPasswordEncoder implements PasswordEncoder {
 
     @Override

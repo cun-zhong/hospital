@@ -44,14 +44,32 @@ public class BookingOrderController {
     private UserService userService;
 
     /**
-     * @deprecated 同步过期号源
+     * @deprecated 就诊
      * */
+    @GetMapping("treat")
+    @ResponseBody
+    public Result treat(Integer id){
+        //获取当前登录用户的信息
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //获取登录用户名
+        String username = user.getUsername();
+        UserInfo userInfo = userInfoService.findByUsername(username);
+        Result treat = bookingOrderService.treat(id, (int) userInfo.getUid());
+        return treat;
+    }
+
+    /**
+     * @deprecated  同步过期号源接口
+     * */
+    @GetMapping("refresh")
+    @ResponseBody
     public Result refersh(){
         //获取当前登录用户的信息
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         //获取登录用户名
         String username = user.getUsername();
         UserInfo userInfo = userInfoService.findByUsername(username);
+        //获取登陆用户的角色
         Role role=userInfo.getRoles().get(0);
         //判断权限
         String name = role.getName();
@@ -62,6 +80,25 @@ public class BookingOrderController {
             result=bookingOrderService.refersh(String.valueOf(userInfo.getUid()));
         }
         return result;
+    }
+
+    /**
+     * @deprecated  取消挂号接口
+     * */
+    @GetMapping("cancel")
+    @ResponseBody
+    public Result cancel(Integer id){
+        Result cancel = bookingOrderService.cancel(id);
+        return cancel;
+    }
+
+
+    /**
+     * @deprecated 医生查询订单页面
+     * */
+    @GetMapping("doctorOrderPage")
+    public String doctorOrderPage(){
+        return "booking/doctorOrderPage";
     }
 
     /**
@@ -82,9 +119,22 @@ public class BookingOrderController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         //获取登录用户名
         String username = user.getUsername();
-        com.sunny.hospital.entity.User userByName = userService.findUserByName(username);
-        jsonObject.put("userId",userByName.getId());
-        jsonObject.put("doctorName","");
+        //查询用户的权限
+        UserInfo userInfo = userInfoService.findByUsername(username);
+        //获取用户角色
+        String role = userInfo.getRoles().get(0).getName();
+        String userId="";
+        String doctorId="";
+        //根据不同权限查询不同订单 管理员查询全部
+        if (role.equals("user")){
+            //用户根据用户id查
+            userId= userInfo.getId().toString();
+        }else if (role.equals("doctor")){
+            //医生根据医生id查
+            doctorId=userInfo.getId().toString();
+        }
+        jsonObject.put("userId",userId);
+        jsonObject.put("doctorId",doctorId);
         Result result = bookingOrderService.queryBookingOrder(jsonObject);
         return result;
     }
@@ -263,25 +313,6 @@ public class BookingOrderController {
         return new Result(data);
     }
 
-    /**
-     * @deprecated  取消挂号接口
-     * */
-    @GetMapping("cancel")
-    @ResponseBody
-    public Result cancel(Integer id){
-        Result cancel = bookingOrderService.cancel(id);
-        return cancel;
-    }
 
-    /**
-     * @deprecated  同步接口
-     * */
-    @GetMapping("refresh")
-    @ResponseBody
-    public Result refresh(Integer id){
-        //判断当前用户是不是管理员 是的话同步所有号源
 
-        Result cancel = bookingOrderService.cancel(id);
-        return cancel;
-    }
 }

@@ -16,6 +16,7 @@ public class UserInfo {
 
     @Id @GeneratedValue
     private long uid;//主键.
+    private Integer id;//用户对应的id
     private String username;//用户名.
     private String password;//密码.
 
@@ -23,6 +24,13 @@ public class UserInfo {
     @ManyToMany(fetch=FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "UserRole", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "role_id") })
     private List<Role> roles;
+
+    public Integer getId(){
+        return id;
+    }
+    private void setId(Integer id){
+        this.id=id;
+    }
 
     public List<Role> getRoles() {
         return roles;
