@@ -1,9 +1,11 @@
 package com.sunny.hospital.controller;
 
 import com.sunny.hospital.permission.bean.UserInfo;
+import com.sunny.hospital.service.BookingOrderService;
 import com.sunny.hospital.service.UserInfoService;
 import com.sunny.hospital.utils.Constants;
 import com.sunny.hospital.utils.VerifyCodeUtil;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class HomeController {
     @Autowired
     private UserInfoService userInfoService;
 
+    @Autowired
+    private BookingOrderService bookingOrderService;
+
     @GetMapping("login")
     public String loginAction() {
         //接收请求云跳转到登陆页面
@@ -48,7 +53,9 @@ public class HomeController {
         if("anonymousUser".equals(principal)) {
             return "/login";
         }else {
+            //获取安全控制器中的用户对象
             User user = (User)principal;
+            //根据用户名查询用户校验对象
             UserInfo byUsername = userInfoService.findByUsername(user.getUsername());
             model.addAttribute("name",user.getUsername());
             HttpSession session=request.getSession();//获取session并将userName存入session对象

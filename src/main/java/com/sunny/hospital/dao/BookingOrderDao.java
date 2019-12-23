@@ -37,4 +37,6 @@ public interface BookingOrderDao extends JpaRepository<BookingOrder,Long> {
 
     //根据医生和状态查询挂号订单
     List<BookingOrder> findAllByStatusAndDoctorId(Integer status,Integer doctorId);
+
+
 }

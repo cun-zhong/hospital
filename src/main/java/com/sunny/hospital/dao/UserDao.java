@@ -3,6 +3,7 @@ package com.sunny.hospital.dao;
 
 import com.sunny.hospital.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 
@@ -22,4 +23,8 @@ public interface UserDao extends JpaRepository<User,Long> {
 
     //根据用户名进行查询
     User findByUsername(String name);
+
+    //查询信用分
+    @Query("select u.integral from User u where u.id=?1")
+    int findIntegral(int id);
 }

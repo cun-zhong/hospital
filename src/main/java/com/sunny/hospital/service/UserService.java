@@ -85,7 +85,7 @@ public class UserService {
             //判断要添加的用户名不为空
             if (StringUtils.isNotEmpty(name)) {
                 //调用dao层方法查看是否数据库中已存在该用户名
-                User byName = userDao.findByUsername(name);
+                UserInfo byName = userInfoRepository.findByUsername(name);
                 //如果不存在
                 if (byName == null) {
                     //判断用户名是否不为空
@@ -98,11 +98,11 @@ public class UserService {
                         User save = userDao.save(user);
                         //添加认证用户
                         UserInfo userInfo=new UserInfo();
-                        userInfo.setUid(save.getId());
+                        userInfo.setId(save.getId());
                         userInfo.setUsername(name);
                         userInfo.setPassword(passwordEncoder.encode(password));
                         //获取就诊人角色对象
-                        Role byRid = roleRepository.findByRid(3);
+                        Role byRid = roleRepository.findByRid(3L);
                         List<Role> roles=new ArrayList<>();
                         roles.add(byRid);
                         userInfo.setRoles(roles);
@@ -113,7 +113,7 @@ public class UserService {
                         return new Result(-1, "普通用户的密码不能为空");
                     }
                 } else {
-                    return new Result(-1, "普通用户已存在,请重新输入");
+                    return new Result(-1, "用户名已存在,请重新输入");
                 }
             } else {
                 return new Result(-1, "普通用户名不能为空");
@@ -142,12 +142,13 @@ public class UserService {
                 //判断修改前后的用户名是否不一致
                 if (!byId.getName().equals(name)) {
                     //通过修改后的用户名调用dao层进行查询
-                    User byName = userDao.findByUsername(name);
+                    UserInfo byName = userInfoRepository.findByUsername(name);
                     //如果存在
                     if (byName != null) {
-                        return new Result(-1, "普通用户名已存在,请重新输入");
+                        return new Result(-1, "用户名已存在,请重新输入");
                     }
                 }
+                //如果一致就继续保存
                 user.setPassword(byId.getPassword());
                 UserInfo userInfo = userInfoRepository.findByUid(id.longValue());
                 userInfo.setPassword(passwordEncoder.encode(byId.getPassword()));

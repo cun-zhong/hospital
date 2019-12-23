@@ -44,6 +44,33 @@ public class BookingOrderController {
     private UserService userService;
 
     /**
+     * @deprecated 获取统计数据
+     * */
+    @GetMapping("getCount")
+    @ResponseBody
+    public Result getCount(){
+        //获取当前登录用户的信息
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //获取登录用户名
+        String username = user.getUsername();
+        UserInfo userInfo = userInfoService.findByUsername(username);
+        JSONObject countData = bookingOrderService.getCountData(userInfo.getRoles().get(0).getName(), userInfo.getId());
+        return new Result(countData);
+    }
+
+
+    /**
+     * @deprecated 获取挂号统计数据
+     * */
+    @GetMapping("getOrderCount")
+    @ResponseBody
+    public Result getOrderCount(){
+
+        Result countData = bookingOrderService.getOrderCountData();
+        return countData;
+    }
+
+    /**
      * @deprecated 就诊
      * */
     @GetMapping("treat")

@@ -79,21 +79,24 @@ public class DoctorService {
             doctor.setCreatedTime(new Date());
             //设置当前时间为更新时间
             doctor.setUpdatedTime(new Date());
-            //获取要传入的医生名称
-            String name = doctor.getName();
-            //密码默认123
-            doctor.setPassword("123");
+            //获取要传入的医生用户名称
+            String name = doctor.getUsername();
+            UserInfo byUsername = userInfoRepository.findByUsername(name);
+            //判断入参的用户名不重复
+            if (byUsername!=null){
+                return new Result(-1,"用户名已存在");
+            }
             //判断新添加的医生姓名不能为空
             if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(doctor.getUsername())) {
                 //保存前端传过来的数据
                 Doctor save = doctorDao.save(doctor);
                 //添加认证用户
                 UserInfo userInfo=new UserInfo();
-                userInfo.setUid(save.getId());
+                userInfo.setId(save.getId());
                 userInfo.setUsername(name);
-                userInfo.setPassword(passwordEncoder.encode("123"));
+                userInfo.setPassword(passwordEncoder.encode(doctor.getPassword()));
                 //获取就诊人角色对象
-                Role byRid = roleRepository.findByRid(2);
+                Role byRid = roleRepository.findByRid(2L);
                 List<Role> roles=new ArrayList<>();
                 roles.add(byRid);
                 userInfo.setRoles(roles);
@@ -115,9 +118,21 @@ public class DoctorService {
     public Result updateDoctor(Doctor doctor) {
         try {
             //获取要传入的医生名称
-            String name = doctor.getName();
+            String name = doctor.getUsername();
+//            UserInfo byUsername = userInfoRepository.findByUsername(name);
+
             //判断新添加的医生姓名不能为空
-            if (StringUtils.isNotEmpty(name)) {
+            if (StringUtils.isNotEmpty(doctor.getName())) {
+                Doctor byId = doctorDao.findById(doctor.getId());
+                //判断传入的用户名和用户原用户名是否一致
+                if (!byId.getUsername().equals(name)) {
+                    //通过修改后的用户名调用dao层进行查询
+                    UserInfo byName = userInfoRepository.findByUsername(name);
+                    //如果存在
+                    if (byName != null) {
+                        return new Result(-1, "用户名已存在,请重新输入");
+                    }
+                }
                 //设置当前时间为更新时间
                 doctor.setUpdatedTime(new Date());
                 //保存前端传过来的数据

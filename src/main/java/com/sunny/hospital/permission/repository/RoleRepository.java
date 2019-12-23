@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Version 1.0
  */
 public interface RoleRepository extends JpaRepository<Role,Long> {
-    Role findByRid(Integer rid);
+    Role findByRid(Long rid);
 }

@@ -7,6 +7,7 @@ import com.sunny.hospital.dao.UserDao;
 import com.sunny.hospital.entity.*;
 import com.sunny.hospital.permission.repository.UserInfoRepository;
 import com.sunny.hospital.utils.Pager;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -19,10 +20,7 @@ import org.springframework.security.core.userdetails.User;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: 孙宇豪
@@ -56,6 +54,143 @@ public class BookingOrderService {
 
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * @deprecated 查询统计数据 待就诊 已就诊 信用分
+     * */
+    public JSONObject getCountData(String role,Integer id){
+        StringBuilder sb=new StringBuilder();
+        int integral=0;
+        //判断当前角色
+        if (role.equals("admin")) {
+            //查询信用分
+            integral = userDao.findIntegral(2);
+        }
+        if (role.equals("doctor")){
+            sb.append(" and doctor_id="+id);
+        }
+        if (role.equals("user")){
+            //查询信用分
+            integral = userDao.findIntegral(id);
+            sb.append(" and user_id="+id);
+        }
+        //查询就诊数据
+        String sql="select count(*) as count,status from booking_order GROUP BY status"+sb;
+        List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+        JSONObject js=new JSONObject();
+
+        //遍历数据以状态为Key
+        for (Map<String,Object> map:list){
+            JSONObject fromObject = JSONObject.fromObject(map);
+            int status = fromObject.getInt("status");
+            int count = fromObject.getInt("count");
+            if (status==0){
+                js.put("n0",count);
+            }
+            if (status==1){
+                js.put("n1",count);
+            }
+            if (status==2){
+                js.put("n2",count);
+            }
+            if (status==3){
+                js.put("n3",count);
+            }
+        }
+        js.put("integral",integral);
+        return js;
+    }
+
+    /**
+     * @deprecated 统计日常挂号流量
+     * */
+    public Result getOrderCountData(){
+        String sql="select count(*) as count,hospital_name,choose_date from booking_order GROUP BY hospital_name,choose_date order by choose_date ";
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
+        //遍历结果集 取出日期列表
+        List<String> dates=new ArrayList<>();
+        //hospitalName->{date->count}
+        Map<String,JSONObject> re=new HashMap<>();
+        for (Map<String,Object> map:maps){
+
+            String choose_date = map.get("choose_date").toString();
+            String hospital_name = map.get("hospital_name").toString();
+            //如果日期不存在就添加到集合
+            if (!dates.contains(choose_date)){
+                dates.add(choose_date);
+            }
+            //如果医院不存在就新建医院对象
+            if (!re.keySet().contains(hospital_name)){
+                re.put(hospital_name,new JSONObject());
+            }
+
+        }
+
+
+
+        //遍历日期 把该日期的相关医院的数据取出来 其他日期就不管
+        for (String date:dates){
+            //遍历数据
+            for (Map<String,Object> map:maps){
+
+                String choose_date = map.get("choose_date").toString();
+                String hospital_name = map.get("hospital_name").toString();
+                int count = Integer.valueOf(map.get("count").toString());
+                //判读遍历出的日期和列表的日期相同不 相同就取当前统计值 不同就给默认值0
+                int nowcount=date.equals(choose_date)?count:0;
+
+                //取出列表中的医院对象
+                JSONObject js = re.get(hospital_name);
+
+                //判断所在医院对象中有这个日期数据
+                if (js.containsKey(date)){
+                    //获取统计数据
+                    int oldcount = js.getInt(date);
+                    //判断如果统计的数据为0 就覆盖这个数据
+                    if (oldcount==0){
+                        js.put(date,nowcount);
+                    }
+                }else {
+                    //医院对象中没有这个数据 就添加进去
+                    js.put(date,nowcount);
+                }
+            }
+        }
+        logger.info(re.toString());
+        //定义一个新集合来存放数据
+        List<Map<String,Object>> list=new ArrayList<>();
+        //遍历旧集合
+        for (String key:re.keySet()){
+            //获取map中的对象
+            JSONObject js = re.get(key);
+            //获取该医院统计数据集合
+            List<Object> objects = Arrays.asList(js.values().toArray());
+            //定义一个新对象存放图表数据
+            Map<String,Object> map=new HashMap<>();
+            map.put("name",key);
+            map.put("type","line");
+            map.put("smooth",true);
+            map.put("itemStyle","{normal: {areaStyle: {type: 'default'}}}");
+            map.put("data",objects);
+            list.add(map);
+        }
+        JSONObject result=new JSONObject();
+        //日期数据
+        result.put("dates",dates);
+        //统计及图标数据
+        /**
+         * series : [{
+         *                 name:'PV',
+         *                 type:'line',
+         *                 smooth:true,
+         *                 itemStyle: {normal: {areaStyle: {type: 'default'}}},
+         *                 data: [111,222,333,444,555,666,3333,33333,55555,66666,33333,3333,6666,11888,26666,38888,56666,42222,39999,28888,17777,9666,6555,5555,3333,2222,3111,6999,5888,2777,1666,999,888,777]
+         *               }
+         * */
+
+        result.put("counts",list);
+        return new Result(result);
+    }
 
     /**
      * @deprecated 就诊
