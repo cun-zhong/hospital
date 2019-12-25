@@ -67,12 +67,12 @@
                     {{#  } }}
                 </script>
                 <script type="text/html" id="table-content-list">
-                    {{#  if(d.status == "0"){ }}
-                    <a class="layui-btn layui-btn-xs" lay-event="treat"><i
-                            class="layui-icon layui-icon-chart"></i>就诊</a>
+                    {{#  if(d.commentType == "1"){ }}
+                    <a  class="layui-btn layui-btn-normal layui-btn-xs" lay-event="comment">回复</a>
+                    {{#  } if(d.status == "0"){ }}
+                    <a class="layui-btn layui-btn-xs" lay-event="treat">就诊</a>
                     {{#  }else{ }}
-                    <a class="layui-btn layui-btn-disabled layui-btn-xs"><i
-                            class="layui-icon layui-icon-chart"></i>就诊</a>
+                    <a class="layui-btn layui-btn-disabled layui-btn-xs">就诊</a>
                     {{#  } }}
 
                 </script>
@@ -198,6 +198,9 @@
                     , layEvent = obj.event;
                 if (layEvent == "treat") {
                     treat(data);
+                }
+                if (layEvent == "comment"){
+                    window.location.href="comment/orderDetail?id="+data.id
                 }
             });
 

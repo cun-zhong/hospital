@@ -62,12 +62,11 @@
                     {{#  } }}
                 </script>
                 <script type="text/html" id="table-content-list">
+                    <a  class="layui-btn layui-btn-radius layui-btn-normal layui-btn-xs" lay-event="comment">评论</a>
                     {{#  if(d.status == "0"){ }}
-                    <a class="layui-btn layui-btn-radius layui-btn-danger layui-btn-xs" lay-event="cancel"><i
-                            class="layui-icon layui-icon-return"></i>退号</a>
+                    <a class="layui-btn layui-btn-radius layui-btn-danger layui-btn-xs" lay-event="cancel">退号</a>
                     {{#  }else{ }}
-                    <a class="layui-btn layui-btn-radius layui-btn-disabled layui-btn-xs"><i
-                            class="layui-icon layui-icon-return"></i>退号</a>
+                    <a class="layui-btn layui-btn-radius layui-btn-disabled layui-btn-xs">退号</a>
                     {{#  } }}
 
                 </script>
@@ -153,6 +152,9 @@
                     , layEvent = obj.event;
                 if (layEvent == "cancel") {
                     cancel(data);
+                }
+                if (layEvent == "comment"){
+                    window.location.href="comment/orderDetail?id="+data.id
                 }
             });
 

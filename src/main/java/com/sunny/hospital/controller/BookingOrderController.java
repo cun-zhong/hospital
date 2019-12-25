@@ -104,7 +104,7 @@ public class BookingOrderController {
         if (name.equals("admin")){
             result=bookingOrderService.refersh("");
         }else {
-            result=bookingOrderService.refersh(String.valueOf(userInfo.getUid()));
+            result=bookingOrderService.refersh(String.valueOf(userInfo.getId()));
         }
         return result;
     }

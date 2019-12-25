@@ -55,6 +55,10 @@ public class BookingOrderService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public BookingOrder findById(Integer id){
+        return bookingOrderDao.findById(id);
+    }
+
     /**
      * @deprecated 查询统计数据 待就诊 已就诊 信用分
      * */

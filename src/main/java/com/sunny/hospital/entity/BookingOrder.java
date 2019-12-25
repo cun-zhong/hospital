@@ -6,9 +6,11 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: 孙宇豪
@@ -80,4 +82,15 @@ public class BookingOrder {
 
     @Transient
     private String date;
+
+//    @Column(name = "comment_size")
+//    private Integer commentSize = 0;  // 评论数
+
+    //当文章删除后，与之关联的评论也会被删除 懒加载 联级更新
+    @OneToOne(mappedBy = "bookingOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("id DESC")
+    @Where(clause = "p_id=0")
+    private Comment comment;
+
+    private Integer commentType;
 }

@@ -37,6 +37,7 @@ public class BookingOrderRowMapper implements RowMapper, Serializable {
         bookingOrder.setSort(resultSet.getInt("sort"));
         bookingOrder.setRangeSort(resultSet.getString("range_sort"));
         bookingOrder.setPatientName(resultSet.getString("patient_name"));
+        bookingOrder.setCommentType(resultSet.getInt("comment_type"));
 
         return bookingOrder;
 
