@@ -16,13 +16,19 @@
     <div class="layui-input-inline">
       <input type="hidden" name="id" th:value="${dept.id}">
     </div>
-    <div class="layui-form-item" th:if="${#strings.isEmpty(dept.getHospitalCode())}">
+    <div class="layui-form-item" th:if="${#strings.isEmpty(dept.getHospitalName())}">
       <label class="layui-form-label">医院名称</label>
       <div class="layui-input-inline">
         <select name="hospitalName" >
           <option value="">请选择医院</option>
           <option th:each="hospital,hospitalStat:${hospitals}" th:value="${hospital.getHospitalName()}" th:text="${hospital.getHospitalName()}"></option>
         </select>
+      </div>
+    </div>
+    <div class="layui-form-item" th:if="${not #strings.isEmpty(dept.getHospitalName())}">
+      <label class="layui-form-label">医院名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="hospitalName" th:value="${dept.hospitalName}"  lay-verify="required" autocomplete="off" class="layui-input" disabled>
       </div>
     </div>
     <div class="layui-form-item">

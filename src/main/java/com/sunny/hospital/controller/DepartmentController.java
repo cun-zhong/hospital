@@ -70,12 +70,12 @@ public class DepartmentController {
      * */
     @GetMapping("updateOrAddDepartment")
     public String updateOrAddDepartment(Integer id, ModelMap modelMap){
+        List<Hospital> all = hospitalService.findAll();
+        modelMap.addAttribute("hospitals",all);
         if (id!=null){
             Department byId = departmentService.findById(id);
             modelMap.addAttribute("dept",byId);
         }else {
-            List<Hospital> all = hospitalService.findAll();
-            modelMap.addAttribute("hospitals",all);
             modelMap.addAttribute("dept",new Department());
         }
         return "department/updateOrAddDepartment";

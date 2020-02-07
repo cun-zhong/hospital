@@ -22,7 +22,7 @@ public interface DepartmentDao extends JpaRepository<Department,Long> {
     Department findByHisDepartmentName(String hisDepartmentName);
 
     //根据科室名称和医院编码进行查找
-    Department findByHisDepartmentNameAndHospitalCode(String hisDepartmentName,String hospitalCode);
+    Department findByHisDepartmentNameAndHospitalName(String hisDepartmentName,String hospitalName);
 
     //根据科室id进行删除科室信息
     void deleteById(Integer id);

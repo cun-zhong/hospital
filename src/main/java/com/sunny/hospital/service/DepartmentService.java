@@ -69,10 +69,10 @@ public class DepartmentService {
             if (hisDepartmentName != null) {
 
                 //取出医院编码
-                String hospitalCode = department.getHospitalCode();
+                String hospitalCode = department.getHospitalName();
 
                 //调用dao层方法 通过科室名称和医院编号进行查询
-                Department byHisDepartmentNameAndHospitalCode = departmentDao.findByHisDepartmentNameAndHospitalCode(hisDepartmentName, hospitalCode);
+                Department byHisDepartmentNameAndHospitalCode = departmentDao.findByHisDepartmentNameAndHospitalName(hisDepartmentName, hospitalCode);
 
                 //判断该医院中存在相同的科室名称
                 if (byHisDepartmentNameAndHospitalCode != null) {
@@ -116,10 +116,10 @@ public class DepartmentService {
                 if (!byId.getHisDepartmentName().equals(hisDepartmentName)) {
 
                     //取出医院编码
-                    String hospitalCode = department.getHospitalCode();
+                    String hospitalCode = department.getHospitalName();
 
                     //判断该医院中是否存在相同科室名称
-                    Department byHisDepartmentNameAndHospitalCode = departmentDao.findByHisDepartmentNameAndHospitalCode(hisDepartmentName, hospitalCode);
+                    Department byHisDepartmentNameAndHospitalCode = departmentDao.findByHisDepartmentNameAndHospitalName(hisDepartmentName, hospitalCode);
 
                     //判断该医院中已存在相同科室名称
                     if (byHisDepartmentNameAndHospitalCode != null) {
