@@ -229,6 +229,8 @@ public class HospitalService {
             }
             //修改后保存当前时间
             hospital.setUpdateTime(new Date());
+            hospital.setCommentNum(byId.getCommentNum());
+            hospital.setPayNum(byId.getPayNum());
             //保存前端传过来的所有信息
             Hospital save = hospitalDao.save(hospital);
             //返回保存的信息
