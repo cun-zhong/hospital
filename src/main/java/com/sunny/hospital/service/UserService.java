@@ -154,6 +154,7 @@ public class UserService {
                 userInfo.setPassword(passwordEncoder.encode(byId.getPassword()));
                 userInfoRepository.save(userInfo);
                 user.setIntegral(byId.getIntegral());
+                user.setIntegral(byId.getIntegral());
                 user.setUpdatedTime(new Date());
                 userDao.save(user);
                 //返回所有

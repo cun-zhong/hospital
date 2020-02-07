@@ -49,6 +49,6 @@ public class User {
     private Date createdTime;
     //更新时间
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)
+    @Column(updatable = true)
     private Date updatedTime;
 }
