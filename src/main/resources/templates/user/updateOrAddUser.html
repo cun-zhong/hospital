@@ -17,6 +17,12 @@
         <input type="hidden" id="id" name="id" th:value="${user.id}">
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" th:value="${user.username}" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">姓名</label>
         <div class="layui-input-inline">
             <input type="text" name="name" th:value="${user.name}" lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input">
