@@ -140,7 +140,7 @@ public class UserService {
                 //获取要修改的普通用户的id
                 User byId = userDao.findById(id);
                 //判断修改前后的用户名是否不一致
-                if (!byId.getName().equals(name)) {
+                if (!byId.getUsername().equals(name)) {
                     //通过修改后的用户名调用dao层进行查询
                     UserInfo byName = userInfoRepository.findByUsername(name);
                     //如果存在
