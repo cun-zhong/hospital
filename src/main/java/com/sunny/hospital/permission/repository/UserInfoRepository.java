@@ -19,5 +19,9 @@ public interface UserInfoRepository extends JpaRepository<UserInfo,Long> {
 
     public UserInfo findByUid(Long uid);
 
+    public UserInfo findByIdAndUsername(Integer id,String username);
+
+
+
 
 }

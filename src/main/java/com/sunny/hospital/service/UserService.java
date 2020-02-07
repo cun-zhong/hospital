@@ -150,7 +150,7 @@ public class UserService {
                 }
                 //如果一致就继续保存
                 user.setPassword(byId.getPassword());
-                UserInfo userInfo = userInfoRepository.findByUid(id.longValue());
+                UserInfo userInfo = userInfoRepository.findByIdAndUsername(id,byId.getUsername());
                 userInfo.setPassword(passwordEncoder.encode(byId.getPassword()));
                 userInfoRepository.save(userInfo);
                 user.setIntegral(byId.getIntegral());

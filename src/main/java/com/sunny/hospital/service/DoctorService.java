@@ -137,7 +137,7 @@ public class DoctorService {
                 doctor.setUpdatedTime(new Date());
                 //保存前端传过来的数据
                 doctorDao.save(doctor);
-                UserInfo userInfo = userInfoRepository.findByUid(doctor.getId().longValue());
+                UserInfo userInfo = userInfoRepository.findByIdAndUsername(doctor.getId(),byId.getUsername());
                 userInfo.setPassword(passwordEncoder.encode(doctor.getPassword()));
                 userInfoRepository.save(userInfo);
                 return new Result(0, "成功修改此医生", "");
