@@ -60,7 +60,7 @@ layui.define(['table', 'form'], function(exports){
         if(obj.event === 'del'){
             layer.confirm('确定删除吗？', function (index) {
                 $.ajax({
-                    url: "doctor/deleteHospital?id=" + data.id,
+                    url: "doctor/deleteById?id=" + data.id,
                     type: "get",
                     dataType: "json",
                     success: function (data) {
