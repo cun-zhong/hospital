@@ -68,7 +68,7 @@ public class BookingOrderService {
         //判断当前角色
         if (role.equals("admin")) {
             //查询信用分
-            integral = userDao.findIntegral(2);
+            integral = userDao.findIntegral(1);
         }
         if (role.equals("doctor")){
             sb.append(" and doctor_id="+id);
@@ -79,10 +79,13 @@ public class BookingOrderService {
             sb.append(" and user_id="+id);
         }
         //查询就诊数据
-        String sql="select count(*) as count,status from booking_order GROUP BY status"+sb;
+        String sql="select count(*) as count,status from booking_order where id>0 "+sb+" GROUP BY status";
         List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
         JSONObject js=new JSONObject();
-
+        js.put("n0",0);
+        js.put("n1",0);
+        js.put("n2",0);
+        js.put("n3",0);
         //遍历数据以状态为Key
         for (Map<String,Object> map:list){
             JSONObject fromObject = JSONObject.fromObject(map);
@@ -556,13 +559,13 @@ public class BookingOrderService {
             //计算规定退号时间
             Calendar c=Calendar.getInstance();
             c.setTime(chooseDate);
-            if ("0".equals(am)){
-                //上午截止12点
-                c.set(Calendar.HOUR_OF_DAY,12);
-            }else {
+//            if ("0".equals(am)){
+//                //上午截止12点
+//                c.set(Calendar.HOUR_OF_DAY,12);
+//            }else {
                 //下午截止18点
                 c.set(Calendar.HOUR_OF_DAY,18);
-            }
+//            }
             //判断是否超出规定退号时间
             if (now.getTime() > c.getTimeInMillis()){
                 return new Result(-1,"已超出规定退号时间，无法退号");

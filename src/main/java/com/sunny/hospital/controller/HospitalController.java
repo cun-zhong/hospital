@@ -144,7 +144,7 @@ public class HospitalController {
         UserInfo userInfo = userInfoService.findByUsername(username);
         String role = userInfo.getRoles().get(0).getName();
         List<Hospital> all=new ArrayList<>();
-        if (role.equals("admin")){
+        if (role.equals("admin") || role.equals("user")){
             all = hospitalService.findAll();
         }else {
             Doctor doctor = doctorService.findByUsername(username);
